@@ -1,5 +1,14 @@
 <?php
 
+use App\Enums\IdentityType;
+use App\Enums\MailProvider;
+use App\Enums\TeamRole;
+use App\Models\MailIdentity;
+use App\Models\ProviderConnection;
+use App\Models\Team;
+use App\Models\User;
+use App\Services\Mail\MailProviderManager;
+use App\Services\Mail\Testing\FakeMailProviderDriver;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -47,4 +56,56 @@ expect()->extend('toBeOne', function () {
 function something()
 {
     // ..
+}
+
+/**
+ * Create a team with a member of the given role, switch the user onto it, and
+ * return both. Used throughout the mail feature suite.
+ *
+ * @return array{0: User, 1: Team}
+ */
+function teamMember(TeamRole $role = TeamRole::Owner): array
+{
+    $user = User::factory()->create();
+    $team = Team::factory()->create();
+    $team->members()->attach($user, ['role' => $role->value]);
+    $user->switchTeam($team);
+
+    return [$user, $team];
+}
+
+/**
+ * Install a fake mail provider driver and return it for assertions.
+ */
+function fakeMailDriver(?FakeMailProviderDriver $driver = null): FakeMailProviderDriver
+{
+    $driver ??= new FakeMailProviderDriver;
+
+    app(MailProviderManager::class)->fake($driver);
+
+    return $driver;
+}
+
+/**
+ * Build a team ready to send: an active connection and a verified example.com
+ *
+ * domain, so `*@example.com` is an allowed sender.
+ *
+ * @return array{0: User, 1: Team, 2: ProviderConnection}
+ */
+function sendingTeam(TeamRole $role = TeamRole::Owner): array
+{
+    [$user, $team] = teamMember($role);
+
+    $connection = ProviderConnection::factory()->for($team)->create([
+        'provider' => MailProvider::Ses,
+        'is_active' => true,
+    ]);
+
+    MailIdentity::factory()->for($connection, 'connection')->verified()->create([
+        'identity' => 'example.com',
+        'type' => IdentityType::Domain,
+    ]);
+
+    return [$user, $team, $connection];
 }
