@@ -17,9 +17,17 @@ const tabs: { value: Appearance; Icon: typeof Sun; label: string }[] = [
 </script>
 
 <template>
-    <Tabs :model-value="appearance" :class="$props.class" @update:model-value="(value) => updateAppearance(value as Appearance)">
+    <Tabs
+        :model-value="appearance"
+        :class="$props.class"
+        @update:model-value="(value) => updateAppearance(value as Appearance)"
+    >
         <TabsList>
-            <TabsTrigger v-for="{ value, Icon, label } in tabs" :key="value" :value="value">
+            <TabsTrigger
+                v-for="{ value, Icon, label } in tabs"
+                :key="value"
+                :value="value"
+            >
                 <component :is="Icon" />
                 {{ label }}
             </TabsTrigger>

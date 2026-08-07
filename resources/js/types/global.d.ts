@@ -1,4 +1,5 @@
 import type { Auth } from '@/types/auth';
+import type { MailPermissions, MailProvider } from '@/types/mail';
 import type { Team } from '@/types/teams';
 
 // Extend ImportMeta interface for Vite...
@@ -22,6 +23,9 @@ declare module '@inertiajs/core' {
             sidebarOpen: boolean;
             currentTeam: Team | null;
             teams: Team[];
+            mailPermissions: MailPermissions | null;
+            activeProvider: MailProvider | null;
+            providerConnected: boolean;
             [key: string]: unknown;
         };
     }

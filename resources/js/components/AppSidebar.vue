@@ -1,6 +1,16 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
-import { BookOpen, FolderGit2, LayoutGrid } from '@lucide/vue';
+import {
+    Ban,
+    BookOpen,
+    FolderGit2,
+    Gauge,
+    Globe,
+    KeyRound,
+    LayoutGrid,
+    Mail,
+    Plug,
+} from '@lucide/vue';
 import { computed } from 'vue';
 import AppLogo from '@/components/AppLogo.vue';
 import NavFooter from '@/components/NavFooter.vue';
@@ -17,6 +27,7 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
+import mail from '@/routes/mail';
 import type { NavItem } from '@/types';
 
 const page = usePage();
@@ -32,6 +43,64 @@ const mainNavItems = computed<NavItem[]>(() => [
         icon: LayoutGrid,
     },
 ]);
+
+const mailNavItems = computed<NavItem[]>(() => {
+    const slug = page.props.currentTeam?.slug;
+    const permissions = page.props.mailPermissions;
+
+    if (!slug) {
+        return [];
+    }
+
+    const items: NavItem[] = [];
+
+    if (permissions?.canViewEmails) {
+        items.push({
+            title: 'Overview',
+            href: mail.dashboard.url(slug),
+            icon: Gauge,
+        });
+        items.push({
+            title: 'Emails',
+            href: mail.emails.index.url(slug),
+            icon: Mail,
+        });
+    }
+
+    if (permissions?.canManageDomains) {
+        items.push({
+            title: 'Domains',
+            href: mail.domains.index.url(slug),
+            icon: Globe,
+        });
+    }
+
+    if (permissions?.canManageSuppressions) {
+        items.push({
+            title: 'Suppressions',
+            href: mail.suppressions.index.url(slug),
+            icon: Ban,
+        });
+    }
+
+    if (permissions?.canManageApiKeys) {
+        items.push({
+            title: 'API keys',
+            href: mail.apiKeys.index.url(slug),
+            icon: KeyRound,
+        });
+    }
+
+    if (permissions?.canManageProviders) {
+        items.push({
+            title: 'Providers',
+            href: mail.connection.index.url(slug),
+            icon: Plug,
+        });
+    }
+
+    return items;
+});
 
 const footerNavItems: NavItem[] = [
     {
@@ -68,6 +137,11 @@ const footerNavItems: NavItem[] = [
 
         <SidebarContent>
             <NavMain :items="mainNavItems" />
+            <NavMain
+                v-if="mailNavItems.length"
+                :items="mailNavItems"
+                label="Email"
+            />
         </SidebarContent>
 
         <SidebarFooter>
