@@ -2,9 +2,14 @@
 
 namespace App\Providers;
 
+use App\Services\Mail\Drivers\Ses\SesClientFactory;
+use App\Services\Mail\MailProviderManager;
 use Carbon\CarbonImmutable;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 
@@ -15,7 +20,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(MailProviderManager::class, fn ($app) => new MailProviderManager(
+            $app->make(SesClientFactory::class),
+        ));
     }
 
     /**
@@ -24,6 +31,17 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->configureDefaults();
+        $this->configureRateLimiting();
+    }
+
+    /**
+     * Configure the application's rate limiters.
+     */
+    protected function configureRateLimiting(): void
+    {
+        // Webhooks (SNS bursts) and read API traffic share a generous per-IP limit.
+        RateLimiter::for('api', fn (Request $request) => Limit::perMinute(300)
+            ->by($request->user()?->id ?: $request->ip()));
     }
 
     /**
