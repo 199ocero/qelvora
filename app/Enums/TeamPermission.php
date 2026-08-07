@@ -13,4 +13,11 @@ enum TeamPermission: string
 
     case CreateInvitation = 'invitation:create';
     case CancelInvitation = 'invitation:cancel';
+
+    case ManageMailProviders = 'mail:manage';
+    case ManageMailDomains = 'mail:domain:manage';
+    case SendEmail = 'mail:email:send';
+    case ViewEmails = 'mail:email:view';
+    case ManageSuppressions = 'mail:suppression:manage';
+    case ManageApiKeys = 'mail:apikey:manage';
 }

@@ -29,8 +29,17 @@ enum TeamRole: string
                 TeamPermission::UpdateTeam,
                 TeamPermission::CreateInvitation,
                 TeamPermission::CancelInvitation,
+                // Mail: admins operate everything except provider credentials.
+                TeamPermission::ManageMailDomains,
+                TeamPermission::SendEmail,
+                TeamPermission::ViewEmails,
+                TeamPermission::ManageSuppressions,
+                TeamPermission::ManageApiKeys,
             ],
-            self::Member => [],
+            self::Member => [
+                TeamPermission::ViewEmails,
+                TeamPermission::SendEmail,
+            ],
         };
     }
 

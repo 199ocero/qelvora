@@ -97,4 +97,52 @@ class TeamPolicy
     {
         return ! $team->is_personal && $user->hasTeamPermission($team, TeamPermission::DeleteTeam);
     }
+
+    /**
+     * Determine whether the user can manage the team's email provider connections.
+     */
+    public function manageProviders(User $user, Team $team): bool
+    {
+        return $user->hasTeamPermission($team, TeamPermission::ManageMailProviders);
+    }
+
+    /**
+     * Determine whether the user can manage the team's sending domains/identities.
+     */
+    public function manageDomains(User $user, Team $team): bool
+    {
+        return $user->hasTeamPermission($team, TeamPermission::ManageMailDomains);
+    }
+
+    /**
+     * Determine whether the user can send email on behalf of the team.
+     */
+    public function sendEmail(User $user, Team $team): bool
+    {
+        return $user->hasTeamPermission($team, TeamPermission::SendEmail);
+    }
+
+    /**
+     * Determine whether the user can view the team's email logs and analytics.
+     */
+    public function viewEmails(User $user, Team $team): bool
+    {
+        return $user->hasTeamPermission($team, TeamPermission::ViewEmails);
+    }
+
+    /**
+     * Determine whether the user can manage the team's suppression list.
+     */
+    public function manageSuppressions(User $user, Team $team): bool
+    {
+        return $user->hasTeamPermission($team, TeamPermission::ManageSuppressions);
+    }
+
+    /**
+     * Determine whether the user can manage the team's API keys.
+     */
+    public function manageApiKeys(User $user, Team $team): bool
+    {
+        return $user->hasTeamPermission($team, TeamPermission::ManageApiKeys);
+    }
 }

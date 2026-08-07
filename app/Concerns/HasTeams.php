@@ -2,6 +2,7 @@
 
 namespace App\Concerns;
 
+use App\Data\MailPermissions;
 use App\Data\TeamPermissions;
 use App\Data\UserTeam;
 use App\Enums\TeamPermission;
@@ -175,6 +176,23 @@ trait HasTeams
             canRemoveMember: $role?->hasPermission(TeamPermission::RemoveMember) ?? false,
             canCreateInvitation: $role?->hasPermission(TeamPermission::CreateInvitation) ?? false,
             canCancelInvitation: $role?->hasPermission(TeamPermission::CancelInvitation) ?? false,
+        );
+    }
+
+    /**
+     * Get the team's email-platform permissions as a MailPermissions object.
+     */
+    public function toMailPermissions(Team $team): MailPermissions
+    {
+        $role = $this->teamRole($team);
+
+        return new MailPermissions(
+            canManageProviders: $role?->hasPermission(TeamPermission::ManageMailProviders) ?? false,
+            canManageDomains: $role?->hasPermission(TeamPermission::ManageMailDomains) ?? false,
+            canSendEmail: $role?->hasPermission(TeamPermission::SendEmail) ?? false,
+            canViewEmails: $role?->hasPermission(TeamPermission::ViewEmails) ?? false,
+            canManageSuppressions: $role?->hasPermission(TeamPermission::ManageSuppressions) ?? false,
+            canManageApiKeys: $role?->hasPermission(TeamPermission::ManageApiKeys) ?? false,
         );
     }
 
