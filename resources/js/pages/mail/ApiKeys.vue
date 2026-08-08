@@ -87,8 +87,8 @@ function revoke(apiKey: ApiKey) {
                 </CardDescription>
             </CardHeader>
             <CardContent>
-                <div
-                    class="flex items-center gap-2 rounded-md border bg-muted/50 p-3"
+                <Card
+                    class="flex flex-row items-center gap-2 rounded-md bg-muted/50 p-3"
                 >
                     <code class="flex-1 overflow-x-auto font-mono text-sm">{{
                         newApiKey
@@ -101,7 +101,7 @@ function revoke(apiKey: ApiKey) {
                         <component :is="copied ? Check : Copy" class="size-4" />
                         {{ copied ? 'Copied' : 'Copy' }}
                     </Button>
-                </div>
+                </Card>
             </CardContent>
         </Card>
 
@@ -140,11 +140,11 @@ function revoke(apiKey: ApiKey) {
         </Card>
 
         <div class="space-y-3">
-            <div
+            <Card
                 v-for="apiKey in apiKeys"
                 :key="apiKey.id"
                 data-test="api-key-row"
-                class="flex flex-wrap items-center justify-between gap-4 rounded-lg border p-4"
+                class="flex flex-row flex-wrap items-center justify-between gap-4 px-4 py-4"
             >
                 <div class="flex items-center gap-3">
                     <KeyRound class="size-4 text-muted-foreground" />
@@ -171,7 +171,7 @@ function revoke(apiKey: ApiKey) {
                         Revoke
                     </Button>
                 </div>
-            </div>
+            </Card>
 
             <p
                 v-if="apiKeys.length === 0"

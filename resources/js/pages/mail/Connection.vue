@@ -1,6 +1,13 @@
 <script setup lang="ts">
 import { Form, Head, router, usePage } from '@inertiajs/vue3';
-import { Check, Plug, RefreshCw, Trash2, Webhook } from '@lucide/vue';
+import {
+    Check,
+    ChevronDown,
+    Plug,
+    RefreshCw,
+    Trash2,
+    Webhook,
+} from '@lucide/vue';
 import { computed, ref } from 'vue';
 import InputError from '@/components/InputError.vue';
 import { Badge } from '@/components/ui/badge';
@@ -159,37 +166,49 @@ function formatNumber(value: number | null): string {
 
         <!-- Provider picker -->
         <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <button
+            <Card
                 v-for="provider in providers"
                 :key="provider.value"
-                type="button"
-                :disabled="!provider.implemented"
+                role="button"
+                :tabindex="provider.implemented ? 0 : -1"
+                :aria-disabled="!provider.implemented"
+                :aria-pressed="selectedProvider?.value === provider.value"
                 data-test="provider-option"
                 :class="[
-                    'flex flex-col items-start gap-2 rounded-lg border p-4 text-left transition-colors',
+                    'gap-2 py-4 text-left transition-colors',
                     provider.implemented
-                        ? 'hover:border-primary'
-                        : 'cursor-not-allowed opacity-60',
+                        ? 'cursor-pointer hover:border-primary'
+                        : 'pointer-events-none cursor-not-allowed opacity-60',
                     selectedProvider?.value === provider.value
                         ? 'border-primary ring-1 ring-primary'
                         : '',
                 ]"
-                @click="selectProvider(provider)"
+                @click="provider.implemented && selectProvider(provider)"
+                @keydown.enter.prevent="
+                    provider.implemented && selectProvider(provider)
+                "
+                @keydown.space.prevent="
+                    provider.implemented && selectProvider(provider)
+                "
             >
-                <div class="flex w-full items-center justify-between">
-                    <span class="font-medium">{{ provider.label }}</span>
-                    <Badge v-if="!provider.implemented" variant="secondary"
-                        >Coming soon</Badge
-                    >
-                    <Check
-                        v-else-if="connectedProviders.has(provider.value)"
-                        class="size-4 text-primary"
-                    />
-                </div>
-                <span class="text-xs text-muted-foreground capitalize">
-                    {{ provider.capabilities.join(' · ') }}
-                </span>
-            </button>
+                <CardHeader class="px-4">
+                    <div class="flex w-full items-center justify-between">
+                        <CardTitle class="text-base font-medium">{{
+                            provider.label
+                        }}</CardTitle>
+                        <Badge v-if="!provider.implemented" variant="secondary"
+                            >Coming soon</Badge
+                        >
+                        <Check
+                            v-else-if="connectedProviders.has(provider.value)"
+                            class="size-4 text-primary"
+                        />
+                    </div>
+                    <CardDescription class="text-xs capitalize">
+                        {{ provider.capabilities.join(' · ') }}
+                    </CardDescription>
+                </CardHeader>
+            </Card>
         </div>
 
         <!-- Connect form -->
@@ -222,21 +241,25 @@ function formatNumber(value: number | null): string {
                     >
                         <Label :for="field.name">{{ field.label }}</Label>
 
-                        <select
-                            v-if="field.type === 'select'"
-                            :id="field.name"
-                            :name="`credentials[${field.name}]`"
-                            class="h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:bg-input/30"
-                            :required="field.required"
-                        >
-                            <option
-                                v-for="option in field.options"
-                                :key="option.value"
-                                :value="option.value"
+                        <div v-if="field.type === 'select'" class="relative">
+                            <select
+                                :id="field.name"
+                                :name="`credentials[${field.name}]`"
+                                class="h-9 w-full appearance-none rounded-md border border-input bg-transparent py-1 pr-9 pl-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:bg-input/30"
+                                :required="field.required"
                             >
-                                {{ option.label }}
-                            </option>
-                        </select>
+                                <option
+                                    v-for="option in field.options"
+                                    :key="option.value"
+                                    :value="option.value"
+                                >
+                                    {{ option.label }}
+                                </option>
+                            </select>
+                            <ChevronDown
+                                class="pointer-events-none absolute top-1/2 right-3 size-4 -translate-y-1/2 text-muted-foreground"
+                            />
+                        </div>
 
                         <Input
                             v-else
@@ -427,11 +450,11 @@ function formatNumber(value: number | null): string {
         <div class="space-y-3">
             <h3 class="text-sm font-medium">Saved connections</h3>
 
-            <div
+            <Card
                 v-for="connection in connections"
                 :key="connection.id"
                 data-test="connection-row"
-                class="flex flex-wrap items-center justify-between gap-4 rounded-lg border p-4"
+                class="flex flex-row flex-wrap items-center justify-between gap-4 px-4 py-4"
             >
                 <div class="flex items-center gap-3">
                     <span class="font-medium">{{
@@ -469,7 +492,7 @@ function formatNumber(value: number | null): string {
                         <Trash2 class="size-4" />
                     </Button>
                 </div>
-            </div>
+            </Card>
 
             <p
                 v-if="connections.length === 0"

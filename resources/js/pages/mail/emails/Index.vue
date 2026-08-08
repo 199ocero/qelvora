@@ -4,6 +4,7 @@ import { PenLine } from '@lucide/vue';
 import { computed } from 'vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 import {
     Table,
     TableBody,
@@ -80,7 +81,7 @@ function formatDate(value: string | null): string {
             </Button>
         </div>
 
-        <div class="rounded-lg border">
+        <Card class="overflow-hidden py-0 [&_tbody_tr:last-child]:border-0">
             <Table>
                 <TableHeader>
                     <TableRow>
@@ -127,7 +128,7 @@ function formatDate(value: string | null): string {
                     </TableEmpty>
                 </TableBody>
             </Table>
-        </div>
+        </Card>
 
         <div
             v-if="messages.links.length > 3"

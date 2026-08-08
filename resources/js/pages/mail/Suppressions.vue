@@ -134,7 +134,7 @@ function remove(suppression: Suppression) {
             </CardContent>
         </Card>
 
-        <div class="rounded-lg border">
+        <Card class="overflow-hidden py-0 [&_tbody_tr:last-child]:border-0">
             <Table>
                 <TableHeader>
                     <TableRow>
@@ -185,6 +185,6 @@ function remove(suppression: Suppression) {
                     </TableEmpty>
                 </TableBody>
             </Table>
-        </div>
+        </Card>
     </div>
 </template>

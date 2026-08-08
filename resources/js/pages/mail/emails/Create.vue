@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { Form, Head, usePage } from '@inertiajs/vue3';
-import { Send } from '@lucide/vue';
+import { ChevronDown, Send } from '@lucide/vue';
 import { computed } from 'vue';
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
 import {
     Card,
+    CardContent,
     CardDescription,
     CardHeader,
     CardTitle,
@@ -61,72 +62,90 @@ defineOptions({
             </CardHeader>
         </Card>
 
-        <Form
-            v-else
-            v-bind="mail.emails.store.form(slug)"
-            class="space-y-4"
-            v-slot="{ errors, processing }"
-        >
-            <div class="grid gap-2">
-                <Label for="from">From</Label>
-                <select
-                    id="from"
-                    name="from"
-                    class="h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:bg-input/30"
-                    required
+        <Card v-else>
+            <CardContent>
+                <Form
+                    v-bind="mail.emails.store.form(slug)"
+                    class="space-y-4"
+                    v-slot="{ errors, processing }"
                 >
-                    <option
-                        v-for="sender in senders"
-                        :key="sender"
-                        :value="
-                            sender.includes('@') ? sender : `hello@${sender}`
-                        "
+                    <div class="grid gap-2">
+                        <Label for="from">From</Label>
+                        <div class="relative">
+                            <select
+                                id="from"
+                                name="from"
+                                class="h-9 w-full appearance-none rounded-md border border-input bg-transparent py-1 pr-9 pl-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:bg-input/30"
+                                required
+                            >
+                                <option
+                                    v-for="sender in senders"
+                                    :key="sender"
+                                    :value="
+                                        sender.includes('@')
+                                            ? sender
+                                            : `hello@${sender}`
+                                    "
+                                >
+                                    {{
+                                        sender.includes('@')
+                                            ? sender
+                                            : `hello@${sender}`
+                                    }}
+                                </option>
+                            </select>
+                            <ChevronDown
+                                class="pointer-events-none absolute top-1/2 right-3 size-4 -translate-y-1/2 text-muted-foreground"
+                            />
+                        </div>
+                        <p class="text-xs text-muted-foreground">
+                            Any address at a verified domain works; edit it
+                            after selecting if needed.
+                        </p>
+                        <InputError :message="errors.from" />
+                    </div>
+
+                    <div class="grid gap-2">
+                        <Label for="to">To</Label>
+                        <Input
+                            id="to"
+                            name="to"
+                            type="text"
+                            placeholder="user@customer.com"
+                            required
+                        />
+                        <p class="text-xs text-muted-foreground">
+                            Separate multiple recipients with commas.
+                        </p>
+                        <InputError :message="errors.to" />
+                    </div>
+
+                    <div class="grid gap-2">
+                        <Label for="subject">Subject</Label>
+                        <Input id="subject" name="subject" required />
+                        <InputError :message="errors.subject" />
+                    </div>
+
+                    <div class="grid gap-2">
+                        <Label for="html">HTML body</Label>
+                        <Textarea
+                            id="html"
+                            name="html"
+                            class="min-h-48 font-mono text-sm"
+                        />
+                        <InputError :message="errors.html" />
+                    </div>
+
+                    <Button
+                        type="submit"
+                        :disabled="processing"
+                        data-test="send-email"
                     >
-                        {{ sender.includes('@') ? sender : `hello@${sender}` }}
-                    </option>
-                </select>
-                <p class="text-xs text-muted-foreground">
-                    Any address at a verified domain works; edit it after
-                    selecting if needed.
-                </p>
-                <InputError :message="errors.from" />
-            </div>
-
-            <div class="grid gap-2">
-                <Label for="to">To</Label>
-                <Input
-                    id="to"
-                    name="to"
-                    type="text"
-                    placeholder="user@customer.com"
-                    required
-                />
-                <p class="text-xs text-muted-foreground">
-                    Separate multiple recipients with commas.
-                </p>
-                <InputError :message="errors.to" />
-            </div>
-
-            <div class="grid gap-2">
-                <Label for="subject">Subject</Label>
-                <Input id="subject" name="subject" required />
-                <InputError :message="errors.subject" />
-            </div>
-
-            <div class="grid gap-2">
-                <Label for="html">HTML body</Label>
-                <Textarea
-                    id="html"
-                    name="html"
-                    class="min-h-48 font-mono text-sm"
-                />
-                <InputError :message="errors.html" />
-            </div>
-
-            <Button type="submit" :disabled="processing" data-test="send-email">
-                <Send class="size-4" />
-                Send
-            </Button>
-        </Form>
+                        <Send class="size-4" />
+                        Send
+                    </Button>
+                </Form>
+            </CardContent>
+        </Card>
     </div>
 </template>

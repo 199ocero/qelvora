@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Form, Head, Link, usePage } from '@inertiajs/vue3';
-import { Globe, Mail, Plus } from '@lucide/vue';
+import { ChevronDown, Globe, Mail, Plus } from '@lucide/vue';
 import { computed, ref } from 'vue';
 import InputError from '@/components/InputError.vue';
 import { Badge } from '@/components/ui/badge';
@@ -81,14 +81,19 @@ function statusVariant(status: IdentityStatus) {
                 >
                     <div class="grid gap-2 sm:w-40">
                         <Label for="type">Type</Label>
-                        <select
-                            id="type"
-                            name="type"
-                            class="h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:bg-input/30"
-                        >
-                            <option value="domain">Domain</option>
-                            <option value="email">Email address</option>
-                        </select>
+                        <div class="relative">
+                            <select
+                                id="type"
+                                name="type"
+                                class="h-9 w-full appearance-none rounded-md border border-input bg-transparent py-1 pr-9 pl-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:bg-input/30"
+                            >
+                                <option value="domain">Domain</option>
+                                <option value="email">Email address</option>
+                            </select>
+                            <ChevronDown
+                                class="pointer-events-none absolute top-1/2 right-3 size-4 -translate-y-1/2 text-muted-foreground"
+                            />
+                        </div>
                     </div>
                     <div class="grid flex-1 gap-2">
                         <Label for="identity">Domain or email</Label>
@@ -126,18 +131,22 @@ function statusVariant(status: IdentityStatus) {
                 :key="identity.id"
                 :href="mail.domains.show.url([slug, identity.id])"
                 data-test="identity-row"
-                class="flex items-center justify-between gap-4 rounded-lg border p-4 transition-colors hover:border-primary"
+                class="block rounded-xl"
             >
-                <div class="flex items-center gap-3">
-                    <component
-                        :is="identity.type === 'domain' ? Globe : Mail"
-                        class="size-4 text-muted-foreground"
-                    />
-                    <span class="font-medium">{{ identity.identity }}</span>
-                </div>
-                <Badge :variant="statusVariant(identity.status)">
-                    {{ identity.statusLabel }}
-                </Badge>
+                <Card
+                    class="flex flex-row items-center justify-between gap-4 px-4 py-4 transition-colors hover:border-primary"
+                >
+                    <div class="flex items-center gap-3">
+                        <component
+                            :is="identity.type === 'domain' ? Globe : Mail"
+                            class="size-4 text-muted-foreground"
+                        />
+                        <span class="font-medium">{{ identity.identity }}</span>
+                    </div>
+                    <Badge :variant="statusVariant(identity.status)">
+                        {{ identity.statusLabel }}
+                    </Badge>
+                </Card>
             </Link>
 
             <p
