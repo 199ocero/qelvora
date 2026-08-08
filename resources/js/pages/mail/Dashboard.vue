@@ -1,6 +1,19 @@
 <script setup lang="ts">
 import { Head, Link, usePage } from '@inertiajs/vue3';
+import {
+    Activity,
+    BadgeCheck,
+    Ban,
+    ChartColumn,
+    CircleCheck,
+    KeyRound,
+    PlugZap,
+    Send,
+    TriangleAlert,
+    Undo2,
+} from '@lucide/vue';
 import { computed } from 'vue';
+import PendingInvitationsModal from '@/components/PendingInvitationsModal.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -10,8 +23,14 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from '@/components/ui/tooltip';
 import mail from '@/routes/mail';
-import type { ProviderConnection } from '@/types';
+import type { DashboardInvitation, ProviderConnection } from '@/types';
 
 type Stats = {
     sent: number;
@@ -39,6 +58,7 @@ type Props = {
         suppressions: number;
         apiKeys: number;
     };
+    pendingInvitations?: DashboardInvitation[];
 };
 
 const props = defineProps<Props>();
@@ -83,11 +103,30 @@ const quotaUsage = computed(() => {
 function formatNumber(value: number | null): string {
     return value === null ? '—' : new Intl.NumberFormat().format(value);
 }
+
+function formatShortDate(date: string): string {
+    const parsed = new Date(`${date}T00:00:00`);
+
+    return parsed.toLocaleDateString(undefined, {
+        month: 'short',
+        day: 'numeric',
+    });
+}
+
+const trendTotals = computed(() => ({
+    sent: props.trend.reduce((total, point) => total + point.sent, 0),
+    failed: props.trend.reduce((total, point) => total + point.failed, 0),
+}));
 </script>
 
 <template>
     <Head title="Email overview" />
     <h1 class="sr-only">Email overview</h1>
+
+    <PendingInvitationsModal
+        v-if="pendingInvitations && pendingInvitations.length > 0"
+        :invitations="pendingInvitations"
+    />
 
     <div class="space-y-6 px-4 py-6">
         <h2 class="text-xl font-semibold">Email overview</h2>
@@ -95,7 +134,14 @@ function formatNumber(value: number | null): string {
         <!-- Not connected state -->
         <Card v-if="!connection">
             <CardHeader>
-                <CardTitle>Connect a provider to get started</CardTitle>
+                <CardTitle class="flex items-center gap-3">
+                    <div
+                        class="flex size-9 shrink-0 items-center justify-center rounded-full border border-border bg-linear-to-br from-muted/70 to-muted/20"
+                    >
+                        <PlugZap class="size-4.5 text-muted-foreground" />
+                    </div>
+                    Connect a provider to get started
+                </CardTitle>
                 <CardDescription>
                     Connect Amazon SES (or another provider) to start sending
                     and see analytics here.
@@ -113,27 +159,61 @@ function formatNumber(value: number | null): string {
         <template v-else>
             <!-- Stat tiles -->
             <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                <Card>
-                    <CardHeader class="pb-2">
-                        <CardDescription>Sent (30d)</CardDescription>
-                        <CardTitle class="text-2xl">{{
-                            formatNumber(stats.sent)
-                        }}</CardTitle>
-                    </CardHeader>
-                </Card>
-                <Card>
-                    <CardHeader class="pb-2">
-                        <CardDescription>Delivery rate</CardDescription>
-                        <CardTitle class="text-2xl"
-                            >{{ stats.deliveryRate }}%</CardTitle
-                        >
-                    </CardHeader>
-                </Card>
-                <Card>
-                    <CardHeader class="pb-2">
-                        <CardDescription>Bounce rate</CardDescription>
+                <Card class="transition-shadow hover:shadow-md">
+                    <CardHeader>
+                        <CardDescription class="flex items-center gap-3">
+                            <div
+                                class="flex size-9 shrink-0 items-center justify-center rounded-full border border-border bg-linear-to-br from-muted/70 to-muted/20"
+                            >
+                                <Send class="size-4.5 text-muted-foreground" />
+                            </div>
+                            Sent (30d)
+                        </CardDescription>
                         <CardTitle
-                            class="text-2xl"
+                            class="ml-12 text-2xl font-bold tabular-nums"
+                        >
+                            {{ formatNumber(stats.sent) }}
+                        </CardTitle>
+                    </CardHeader>
+                </Card>
+                <Card class="transition-shadow hover:shadow-md">
+                    <CardHeader>
+                        <CardDescription class="flex items-center gap-3">
+                            <div
+                                class="flex size-9 shrink-0 items-center justify-center rounded-full border border-border bg-linear-to-br from-muted/70 to-muted/20"
+                            >
+                                <CircleCheck
+                                    class="size-4.5 text-muted-foreground"
+                                />
+                            </div>
+                            Delivery rate
+                        </CardDescription>
+                        <CardTitle
+                            class="ml-12 text-2xl font-bold tabular-nums"
+                        >
+                            {{ stats.deliveryRate }}%
+                        </CardTitle>
+                    </CardHeader>
+                </Card>
+                <Card class="transition-shadow hover:shadow-md">
+                    <CardHeader>
+                        <CardDescription class="flex items-center gap-3">
+                            <div
+                                class="flex size-9 shrink-0 items-center justify-center rounded-full border border-border bg-linear-to-br from-muted/70 to-muted/20"
+                            >
+                                <Undo2
+                                    class="size-4.5"
+                                    :class="
+                                        stats.bounceRate >= 5
+                                            ? 'text-destructive'
+                                            : 'text-muted-foreground'
+                                    "
+                                />
+                            </div>
+                            Bounce rate
+                        </CardDescription>
+                        <CardTitle
+                            class="ml-12 text-2xl font-bold tabular-nums"
                             :class="
                                 stats.bounceRate >= 5 ? 'text-destructive' : ''
                             "
@@ -142,11 +222,25 @@ function formatNumber(value: number | null): string {
                         </CardTitle>
                     </CardHeader>
                 </Card>
-                <Card>
-                    <CardHeader class="pb-2">
-                        <CardDescription>Complaint rate</CardDescription>
+                <Card class="transition-shadow hover:shadow-md">
+                    <CardHeader>
+                        <CardDescription class="flex items-center gap-3">
+                            <div
+                                class="flex size-9 shrink-0 items-center justify-center rounded-full border border-border bg-linear-to-br from-muted/70 to-muted/20"
+                            >
+                                <TriangleAlert
+                                    class="size-4.5"
+                                    :class="
+                                        stats.complaintRate >= 0.1
+                                            ? 'text-destructive'
+                                            : 'text-muted-foreground'
+                                    "
+                                />
+                            </div>
+                            Complaint rate
+                        </CardDescription>
                         <CardTitle
-                            class="text-2xl"
+                            class="ml-12 text-2xl font-bold tabular-nums"
                             :class="
                                 stats.complaintRate >= 0.1
                                     ? 'text-destructive'
@@ -162,34 +256,164 @@ function formatNumber(value: number | null): string {
             <div class="grid gap-6 lg:grid-cols-3">
                 <!-- Trend -->
                 <Card class="lg:col-span-2">
-                    <CardHeader>
-                        <CardTitle>Last 14 days</CardTitle>
-                        <CardDescription
-                            >Daily sends, with failures
-                            highlighted.</CardDescription
+                    <CardHeader
+                        class="flex flex-row items-start justify-between gap-4 space-y-0"
+                    >
+                        <div class="space-y-1.5">
+                            <CardTitle class="flex items-center gap-3">
+                                <div
+                                    class="flex size-9 shrink-0 items-center justify-center rounded-full border border-border bg-linear-to-br from-muted/70 to-muted/20"
+                                >
+                                    <ChartColumn
+                                        class="size-4.5 text-muted-foreground"
+                                    />
+                                </div>
+                                Last 14 days
+                            </CardTitle>
+                            <CardDescription
+                                >Daily sends, with failures
+                                highlighted.</CardDescription
+                            >
+                        </div>
+                        <div
+                            class="flex items-center gap-4 text-xs text-muted-foreground"
                         >
+                            <span class="flex items-center gap-1.5">
+                                <span class="size-2 rounded-full bg-primary" />
+                                Sent
+                            </span>
+                            <span class="flex items-center gap-1.5">
+                                <span
+                                    class="size-2 rounded-full bg-destructive"
+                                />
+                                Failed
+                            </span>
+                        </div>
                     </CardHeader>
                     <CardContent>
-                        <div class="flex h-40 items-end gap-1">
+                        <div class="flex gap-3">
+                            <!-- Y axis -->
                             <div
-                                v-for="point in trend"
-                                :key="point.date"
-                                class="group flex flex-1 flex-col items-center justify-end"
-                                :title="`${point.date}: ${point.sent} sent, ${point.failed} failed`"
+                                class="flex h-44 flex-col justify-between py-0.5 text-right text-[10px] text-muted-foreground tabular-nums"
                             >
+                                <span>{{ formatNumber(maxSent) }}</span>
+                                <span>{{
+                                    formatNumber(Math.round(maxSent / 2))
+                                }}</span>
+                                <span>0</span>
+                            </div>
+
+                            <div class="min-w-0 flex-1">
+                                <!-- Plot area -->
+                                <TooltipProvider :delay-duration="0">
+                                    <div
+                                        class="relative flex h-44 items-end gap-1.5"
+                                    >
+                                        <!-- Gridlines -->
+                                        <div
+                                            class="pointer-events-none absolute inset-0 flex flex-col justify-between"
+                                        >
+                                            <div
+                                                class="border-t border-border/60"
+                                            />
+                                            <div
+                                                class="border-t border-border/60"
+                                            />
+                                            <div
+                                                class="border-t border-border/60"
+                                            />
+                                        </div>
+
+                                        <Tooltip
+                                            v-for="point in trend"
+                                            :key="point.date"
+                                        >
+                                            <TooltipTrigger as-child>
+                                                <div
+                                                    class="group relative flex h-full flex-1 flex-col justify-end"
+                                                >
+                                                    <!-- Empty-day baseline track -->
+                                                    <div
+                                                        class="absolute inset-x-0 bottom-0 h-full rounded-sm bg-muted/50 transition-colors group-hover:bg-muted"
+                                                    />
+                                                    <!-- Sent bar with failed portion at its base -->
+                                                    <div
+                                                        class="relative w-full overflow-hidden rounded-t-sm bg-primary/85 transition-colors group-hover:bg-primary"
+                                                        :style="{
+                                                            height: `${Math.max((point.sent / maxSent) * 100, point.sent > 0 ? 2 : 0)}%`,
+                                                        }"
+                                                    >
+                                                        <div
+                                                            v-if="
+                                                                point.failed > 0
+                                                            "
+                                                            class="absolute inset-x-0 bottom-0 bg-destructive"
+                                                            :style="{
+                                                                height: `${Math.min((point.failed / Math.max(point.sent, point.failed)) * 100, 100)}%`,
+                                                            }"
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </TooltipTrigger>
+                                            <TooltipContent>
+                                                <div class="space-y-0.5">
+                                                    <div class="font-medium">
+                                                        {{
+                                                            formatShortDate(
+                                                                point.date,
+                                                            )
+                                                        }}
+                                                    </div>
+                                                    <div>
+                                                        {{ point.sent }} sent ·
+                                                        {{ point.failed }}
+                                                        failed
+                                                    </div>
+                                                </div>
+                                            </TooltipContent>
+                                        </Tooltip>
+                                    </div>
+                                </TooltipProvider>
+
+                                <!-- X axis -->
+                                <div class="mt-2 flex gap-1.5">
+                                    <div
+                                        v-for="(point, index) in trend"
+                                        :key="point.date"
+                                        class="flex-1 truncate text-center text-[10px] text-muted-foreground"
+                                    >
+                                        <span v-if="index % 3 === 0">{{
+                                            formatShortDate(point.date)
+                                        }}</span>
+                                    </div>
+                                </div>
+
                                 <div
-                                    class="w-full rounded-sm bg-primary/80 transition-colors group-hover:bg-primary"
-                                    :style="{
-                                        height: `${(point.sent / maxSent) * 100}%`,
-                                    }"
-                                />
-                                <div
-                                    v-if="point.failed > 0"
-                                    class="w-full rounded-sm bg-destructive"
-                                    :style="{
-                                        height: `${(point.failed / maxSent) * 100}%`,
-                                    }"
-                                />
+                                    class="mt-3 flex items-center gap-4 border-t border-border/60 pt-3 text-xs text-muted-foreground"
+                                >
+                                    <span
+                                        class="inline-flex items-baseline gap-1"
+                                    >
+                                        <span
+                                            class="font-medium text-foreground"
+                                            >{{
+                                                formatNumber(trendTotals.sent)
+                                            }}</span
+                                        >
+                                        <span>sent</span>
+                                    </span>
+                                    <span
+                                        class="inline-flex items-baseline gap-1"
+                                    >
+                                        <span
+                                            class="font-medium text-foreground"
+                                            >{{
+                                                formatNumber(trendTotals.failed)
+                                            }}</span
+                                        >
+                                        <span>failed</span>
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     </CardContent>
@@ -198,7 +422,14 @@ function formatNumber(value: number | null): string {
                 <!-- Account health -->
                 <Card>
                     <CardHeader>
-                        <CardTitle class="flex items-center gap-2">
+                        <CardTitle class="flex items-center gap-3">
+                            <div
+                                class="flex size-9 shrink-0 items-center justify-center rounded-full border border-border bg-linear-to-br from-muted/70 to-muted/20"
+                            >
+                                <Activity
+                                    class="size-4.5 text-muted-foreground"
+                                />
+                            </div>
                             Account health
                             <Badge variant="outline">{{
                                 connection.providerLabel
@@ -264,26 +495,61 @@ function formatNumber(value: number | null): string {
 
             <!-- Resource counts -->
             <div class="grid gap-4 sm:grid-cols-3">
-                <div class="rounded-lg border p-4">
-                    <p class="text-2xl font-semibold">
-                        {{ counts.verifiedIdentities }}
-                    </p>
-                    <p class="text-sm text-muted-foreground">
-                        Verified identities
-                    </p>
-                </div>
-                <div class="rounded-lg border p-4">
-                    <p class="text-2xl font-semibold">
-                        {{ counts.suppressions }}
-                    </p>
-                    <p class="text-sm text-muted-foreground">
-                        Suppressed addresses
-                    </p>
-                </div>
-                <div class="rounded-lg border p-4">
-                    <p class="text-2xl font-semibold">{{ counts.apiKeys }}</p>
-                    <p class="text-sm text-muted-foreground">Active API keys</p>
-                </div>
+                <Card class="transition-shadow hover:shadow-md">
+                    <CardHeader>
+                        <CardDescription class="flex items-center gap-3">
+                            <div
+                                class="flex size-9 shrink-0 items-center justify-center rounded-full border border-border bg-linear-to-br from-muted/70 to-muted/20"
+                            >
+                                <BadgeCheck
+                                    class="size-4.5 text-muted-foreground"
+                                />
+                            </div>
+                            Verified identities
+                        </CardDescription>
+                        <CardTitle
+                            class="ml-12 text-2xl font-bold tabular-nums"
+                        >
+                            {{ counts.verifiedIdentities }}
+                        </CardTitle>
+                    </CardHeader>
+                </Card>
+                <Card class="transition-shadow hover:shadow-md">
+                    <CardHeader>
+                        <CardDescription class="flex items-center gap-3">
+                            <div
+                                class="flex size-9 shrink-0 items-center justify-center rounded-full border border-border bg-linear-to-br from-muted/70 to-muted/20"
+                            >
+                                <Ban class="size-4.5 text-muted-foreground" />
+                            </div>
+                            Suppressed addresses
+                        </CardDescription>
+                        <CardTitle
+                            class="ml-12 text-2xl font-bold tabular-nums"
+                        >
+                            {{ counts.suppressions }}
+                        </CardTitle>
+                    </CardHeader>
+                </Card>
+                <Card class="transition-shadow hover:shadow-md">
+                    <CardHeader>
+                        <CardDescription class="flex items-center gap-3">
+                            <div
+                                class="flex size-9 shrink-0 items-center justify-center rounded-full border border-border bg-linear-to-br from-muted/70 to-muted/20"
+                            >
+                                <KeyRound
+                                    class="size-4.5 text-muted-foreground"
+                                />
+                            </div>
+                            Active API keys
+                        </CardDescription>
+                        <CardTitle
+                            class="ml-12 text-2xl font-bold tabular-nums"
+                        >
+                            {{ counts.apiKeys }}
+                        </CardTitle>
+                    </CardHeader>
+                </Card>
             </div>
         </template>
     </div>

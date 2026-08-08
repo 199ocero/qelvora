@@ -6,6 +6,7 @@ use App\Concerns\PresentsMailResources;
 use App\Enums\IdentityStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Team;
+use App\Models\TeamInvitation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
@@ -35,7 +36,37 @@ class DashboardController extends Controller
                 'suppressions' => $team->suppressions()->count(),
                 'apiKeys' => $team->apiKeys()->active()->count(),
             ],
+            'pendingInvitations' => $this->pendingInvitations($request),
         ]);
+    }
+
+    /**
+     * Pending team invitations addressed to the current user, shown as a modal.
+     *
+     * @return array<int, array{code: string, inviterName: string, team: array{name: string, slug: string}}>
+     */
+    protected function pendingInvitations(Request $request): array
+    {
+        $email = strtolower($request->user()->email);
+
+        return TeamInvitation::query()
+            ->with(['inviter', 'team'])
+            ->whereRaw('LOWER(email) = ?', [$email])
+            ->whereNull('accepted_at')
+            ->where(fn ($query) => $query
+                ->whereNull('expires_at')
+                ->orWhere('expires_at', '>=', now()))
+            ->latest()
+            ->get()
+            ->map(fn (TeamInvitation $invitation) => [
+                'code' => $invitation->code,
+                'inviterName' => $invitation->inviter->name,
+                'team' => [
+                    'name' => $invitation->team->name,
+                    'slug' => $invitation->team->slug,
+                ],
+            ])
+            ->all();
     }
 
     /**
