@@ -91,77 +91,49 @@
     }
 }
 
-:root {
-    --background: #faf9f5;
-    --foreground: #3d3929;
-    --card: #f5f4ef;
-    --card-foreground: #141413;
-    --popover: #ffffff;
-    --popover-foreground: #28261b;
-    --primary: #08875d;
-    --primary-foreground: #ffffff;
-    --secondary: #e9e6dc;
-    --secondary-foreground: #535146;
-    --muted: #ede9de;
-    --muted-foreground: #6e6d68;
-    --accent: #e9e6dc;
-    --accent-foreground: #28261b;
-    --destructive: #ef4444;
-    --destructive-foreground: #ffffff;
-    --border: #dad9d4;
-    --input: #b4b2a7;
-    --ring: #08875d;
-    --chart-1: #30b065;
-    --chart-2: #9c87f5;
-    --chart-3: #ded8c4;
-    --chart-4: #dbd3f0;
-    --chart-5: #2db465;
-    --radius: 1rem;
-    --sidebar-background: #f5f4ee;
-    --sidebar-foreground: #3d3d3a;
-    --sidebar-primary: #08875d;
-    --sidebar-primary-foreground: #fbfbfb;
-    --sidebar-accent: #e9e6dc;
-    --sidebar-accent-foreground: #343434;
-    --sidebar-border: #ebebeb;
-    --sidebar-ring: #b5b5b5;
-    --sidebar: #f5f4ee;
-}
-
+/*
+  Qelvora runs a single, Linear-inspired dark theme. The palette below is the
+  only source of truth — there is no light mode. Emerald stays the accent and
+  the rounded radius is preserved. `:root` and `.dark` carry identical values
+  so `dark:` variant utilities keep resolving against the same tokens.
+*/
+:root,
 .dark {
-    --background: #262624;
-    --foreground: #f1f1ef;
-    --card: #2c2c2b;
-    --card-foreground: #faf9f5;
-    --popover: #30302e;
-    --popover-foreground: #e5e5e2;
-    --primary: #0a9163;
+    color-scheme: dark;
+    --background: #0b0d0e;
+    --foreground: #edeef0;
+    --card: #131517;
+    --card-foreground: #edeef0;
+    --popover: #17191c;
+    --popover-foreground: #edeef0;
+    --primary: #009965;
     --primary-foreground: #ffffff;
-    --secondary: #faf9f5;
-    --secondary-foreground: #30302e;
-    --muted: #1b1b19;
-    --muted-foreground: #b7b5a9;
-    --accent: #1a1915;
-    --accent-foreground: #f5f4ee;
-    --destructive: #ef4444;
+    --secondary: #1b1e21;
+    --secondary-foreground: #edeef0;
+    --muted: #16181a;
+    --muted-foreground: #8a8f98;
+    --accent: #1e2226;
+    --accent-foreground: #f4f5f6;
+    --destructive: #f2555a;
     --destructive-foreground: #ffffff;
-    --border: #3e3e38;
-    --input: #52514a;
-    --ring: #0a9163;
-    --chart-1: #30b065;
-    --chart-2: #9c87f5;
-    --chart-3: #1a1915;
-    --chart-4: #2f2b48;
-    --chart-5: #2db465;
-    --sidebar-background: #1f1e1d;
-    --sidebar-foreground: #c3c0b6;
-    --sidebar-primary: #343434;
-    --sidebar-primary-foreground: #fbfbfb;
-    --sidebar-accent: #0f0f0e;
-    --sidebar-accent-foreground: #c3c0b6;
-    --sidebar-border: #3e3e38;
-    --sidebar-ring: #52514a;
-    --sidebar: #1f1e1d;
+    --border: #23262b;
+    --input: #2a2e34;
+    --ring: #009965;
+    --chart-1: #10b981;
+    --chart-2: #8b7cf6;
+    --chart-3: #38bdf8;
+    --chart-4: #f59e0b;
+    --chart-5: #34d399;
+    --radius: 1rem;
+    --sidebar-background: #0d0f10;
+    --sidebar-foreground: #b6bbc2;
+    --sidebar-primary: #009965;
+    --sidebar-primary-foreground: #04140d;
+    --sidebar-accent: #1b1e21;
+    --sidebar-accent-foreground: #f4f5f6;
+    --sidebar-border: #1d2024;
+    --sidebar-ring: #2a2e34;
+    --sidebar: #0d0f10;
 }
 
 @layer base {
@@ -186,5 +158,34 @@
     }
     *::-webkit-scrollbar-thumb:hover {
         background-color: var(--muted-foreground);
+    }
+}
+
+/*
+  Linear-style ambient light. A soft glow anchored at the top-left corner lights
+  the sidebar and the top edge of the main panel and cards. These layer a
+  `background-image` gradient over each surface's `background-color`, so the tint
+  is clipped to the element's rounded corners without any extra markup.
+*/
+@layer components {
+    [data-sidebar='sidebar'] {
+        background-image: radial-gradient(
+            120% 40% at 0% 0%,
+            rgb(255 255 255 / 6.5%),
+            transparent 62%
+        );
+    }
+
+    [data-slot='sidebar-inset'] {
+        background-image: radial-gradient(
+            42% 34% at 0% 0%,
+            rgb(255 255 255 / 4%),
+            transparent 60%
+        );
+    }
+
+    /* Cards use the same uniform border as the sidebar. No gradient. */
+    [data-slot='card'] {
+        border-color: var(--sidebar-border);
     }
 }

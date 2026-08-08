@@ -10,24 +10,13 @@ export type UseAppearanceReturn = {
     updateAppearance: (value: Appearance) => void;
 };
 
-export function updateTheme(value: Appearance): void {
+export function updateTheme(): void {
     if (typeof window === 'undefined') {
         return;
     }
 
-    if (value === 'system') {
-        const mediaQueryList = window.matchMedia(
-            '(prefers-color-scheme: dark)',
-        );
-        const systemTheme = mediaQueryList.matches ? 'dark' : 'light';
-
-        document.documentElement.classList.toggle(
-            'dark',
-            systemTheme === 'dark',
-        );
-    } else {
-        document.documentElement.classList.toggle('dark', value === 'dark');
-    }
+    // Qelvora is dark-only — the theme never leaves dark regardless of preference.
+    document.documentElement.classList.add('dark');
 }
 
 const setCookie = (name: string, value: string, days = 365) => {
@@ -40,22 +29,6 @@ const setCookie = (name: string, value: string, days = 365) => {
     document.cookie = `${name}=${value};path=/;max-age=${maxAge};SameSite=Lax`;
 };
 
-const mediaQuery = () => {
-    if (typeof window === 'undefined') {
-        return null;
-    }
-
-    return window.matchMedia('(prefers-color-scheme: dark)');
-};
-
-const getStoredAppearance = () => {
-    if (typeof window === 'undefined') {
-        return null;
-    }
-
-    return localStorage.getItem('appearance') as Appearance | null;
-};
-
 const prefersDark = (): boolean => {
     if (typeof window === 'undefined') {
         return false;
@@ -64,23 +37,13 @@ const prefersDark = (): boolean => {
     return window.matchMedia('(prefers-color-scheme: dark)').matches;
 };
 
-const handleSystemThemeChange = () => {
-    const currentAppearance = getStoredAppearance();
-
-    updateTheme(currentAppearance || 'system');
-};
-
 export function initializeTheme(): void {
     if (typeof window === 'undefined') {
         return;
     }
 
-    // Initialize theme from saved preference or default to system...
-    const savedAppearance = getStoredAppearance();
-    updateTheme(savedAppearance || 'system');
-
-    // Set up system theme change listener...
-    mediaQuery()?.addEventListener('change', handleSystemThemeChange);
+    // Dark-only: always apply the dark class on boot.
+    updateTheme();
 }
 
 const appearance = ref<Appearance>('system');
@@ -113,7 +76,7 @@ export function useAppearance(): UseAppearanceReturn {
         // Store in cookie for SSR...
         setCookie('appearance', value);
 
-        updateTheme(value);
+        updateTheme();
     }
 
     return {
