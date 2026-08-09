@@ -10,7 +10,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Mail\SendMailRequest;
 use App\Models\ApiKey;
 use App\Models\Team;
-use App\Services\Mail\Data\OutgoingMessage;
 use Illuminate\Http\JsonResponse;
 
 class EmailController extends Controller
@@ -28,16 +27,12 @@ class EmailController extends Controller
         try {
             $message = $sendEmail->handle(
                 $team,
-                new OutgoingMessage(
-                    from: $request->validated('from'),
-                    to: $request->recipients(),
-                    subject: $request->validated('subject'),
-                    html: $request->validated('html'),
-                    text: $request->validated('text'),
-                ),
+                $request->outgoingMessage(),
                 sentVia: 'api',
                 apiKeyId: $apiKey->id,
                 queue: true,
+                templateId: $request->template()?->id,
+                scheduledAt: $request->scheduledAt(),
             );
         } catch (NoActiveProviderException $e) {
             return response()->json(['message' => $e->getMessage()], 409);

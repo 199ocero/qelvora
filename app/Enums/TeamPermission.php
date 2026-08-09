@@ -18,6 +18,7 @@ enum TeamPermission: string
     case ManageMailDomains = 'mail:domain:manage';
     case SendEmail = 'mail:email:send';
     case ViewEmails = 'mail:email:view';
+    case ManageMailTemplates = 'mail:template:manage';
     case ManageSuppressions = 'mail:suppression:manage';
     case ManageApiKeys = 'mail:apikey:manage';
 }

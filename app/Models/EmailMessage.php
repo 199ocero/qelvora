@@ -6,6 +6,8 @@ use App\Enums\EmailMessageStatus;
 use App\Enums\MailProvider;
 use Database\Factories\EmailMessageFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -27,6 +29,8 @@ use Illuminate\Support\Carbon;
  * @property EmailMessageStatus $status
  * @property string $sent_via
  * @property int|null $api_key_id
+ * @property int|null $email_template_id
+ * @property Carbon|null $scheduled_at
  * @property int $opens_count
  * @property int $clicks_count
  * @property string|null $error
@@ -40,8 +44,8 @@ use Illuminate\Support\Carbon;
  */
 #[Fillable([
     'provider_connection_id', 'team_id', 'provider', 'provider_message_id', 'from_address',
-    'to', 'subject', 'html', 'text', 'status', 'sent_via', 'api_key_id', 'opens_count',
-    'clicks_count', 'error', 'tags', 'last_event_at',
+    'to', 'subject', 'html', 'text', 'status', 'sent_via', 'api_key_id', 'email_template_id',
+    'opens_count', 'clicks_count', 'error', 'tags', 'last_event_at', 'scheduled_at',
 ])]
 class EmailMessage extends Model
 {
@@ -79,6 +83,40 @@ class EmailMessage extends Model
     }
 
     /**
+     * Get the template the message was rendered from, if any.
+     *
+     * @return BelongsTo<EmailTemplate, $this>
+     */
+    public function template(): BelongsTo
+    {
+        return $this->belongsTo(EmailTemplate::class, 'email_template_id');
+    }
+
+    /**
+     * Apply the log's search and filter query parameters.
+     *
+     * @param  Builder<EmailMessage>  $query
+     * @param  array{search?: string|null, status?: string|null, via?: string|null, from?: string|null, to?: string|null}  $filters
+     * @return Builder<EmailMessage>
+     */
+    #[Scope]
+    protected function filter(Builder $query, array $filters): Builder
+    {
+        return $query
+            ->when($filters['search'] ?? null, function (Builder $query, string $search) {
+                $query->where(function (Builder $query) use ($search) {
+                    $query->where('subject', 'like', "%{$search}%")
+                        ->orWhere('from_address', 'like', "%{$search}%")
+                        ->orWhere('to', 'like', "%{$search}%");
+                });
+            })
+            ->when($filters['status'] ?? null, fn (Builder $query, string $status) => $query->where('status', $status))
+            ->when($filters['via'] ?? null, fn (Builder $query, string $via) => $query->where('sent_via', $via))
+            ->when($filters['from'] ?? null, fn (Builder $query, string $from) => $query->whereDate('created_at', '>=', $from))
+            ->when($filters['to'] ?? null, fn (Builder $query, string $to) => $query->whereDate('created_at', '<=', $to));
+    }
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>
@@ -91,6 +129,7 @@ class EmailMessage extends Model
             'status' => EmailMessageStatus::class,
             'tags' => 'array',
             'last_event_at' => 'datetime',
+            'scheduled_at' => 'datetime',
         ];
     }
 }

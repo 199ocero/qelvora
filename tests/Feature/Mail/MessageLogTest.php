@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\EmailEventType;
+use App\Enums\EmailMessageStatus;
 use App\Enums\TeamRole;
 use App\Models\EmailEvent;
 use App\Models\EmailMessage;
@@ -36,6 +37,49 @@ test('a message shows its event timeline', function () {
             ->component('mail/emails/Show')
             ->where('message.id', $message->id)
             ->has('events', 1));
+});
+
+test('the log can be filtered by status', function () {
+    [$owner, $team] = teamMember(TeamRole::Owner);
+    $connection = ProviderConnection::factory()->for($team)->create();
+    EmailMessage::factory()->for($connection, 'connection')->status(EmailMessageStatus::Sent)->count(2)->create();
+    EmailMessage::factory()->for($connection, 'connection')->status(EmailMessageStatus::Failed)->create();
+
+    $this->actingAs($owner)
+        ->get(route('mail.emails.index', [$team, 'status' => 'failed']))
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->has('messages.data', 1)
+            ->where('filters.status', 'failed'));
+});
+
+test('the log can be searched by subject and recipient', function () {
+    [$owner, $team] = teamMember(TeamRole::Owner);
+    $connection = ProviderConnection::factory()->for($team)->create();
+    EmailMessage::factory()->for($connection, 'connection')->create(['subject' => 'Invoice paid']);
+    EmailMessage::factory()->for($connection, 'connection')->create(['subject' => 'Newsletter', 'to' => ['reader@list.test']]);
+
+    $this->actingAs($owner)
+        ->get(route('mail.emails.index', [$team, 'search' => 'invoice']))
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page->has('messages.data', 1));
+
+    $this->actingAs($owner)
+        ->get(route('mail.emails.index', [$team, 'search' => 'reader@list.test']))
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page->has('messages.data', 1));
+});
+
+test('the log can be filtered by source', function () {
+    [$owner, $team] = teamMember(TeamRole::Owner);
+    $connection = ProviderConnection::factory()->for($team)->create();
+    EmailMessage::factory()->for($connection, 'connection')->create(['sent_via' => 'api']);
+    EmailMessage::factory()->for($connection, 'connection')->create(['sent_via' => 'ui']);
+
+    $this->actingAs($owner)
+        ->get(route('mail.emails.index', [$team, 'via' => 'api']))
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page->has('messages.data', 1));
 });
 
 test('messages are scoped to their team', function () {

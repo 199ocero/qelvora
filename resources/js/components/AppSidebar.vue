@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
-import { Ban, Gauge, Globe, KeyRound, Mail, Plug } from '@lucide/vue';
+import { Ban, FileText, Gauge, Globe, KeyRound, Mail, Plug } from '@lucide/vue';
 import { computed } from 'vue';
 import AppLogo from '@/components/AppLogo.vue';
 import NavMain from '@/components/NavMain.vue';
@@ -46,6 +46,11 @@ const mailNavItems = computed<NavItem[]>(() => {
             title: 'Emails',
             href: mail.emails.index.url(slug),
             icon: Mail,
+        });
+        items.push({
+            title: 'Templates',
+            href: mail.templates.index.url(slug),
+            icon: FileText,
         });
     }
 

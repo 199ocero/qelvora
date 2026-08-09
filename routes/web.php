@@ -8,6 +8,7 @@ use App\Http\Controllers\Mail\DashboardController as MailDashboardController;
 use App\Http\Controllers\Mail\EmailController;
 use App\Http\Controllers\Mail\IdentityController;
 use App\Http\Controllers\Mail\SuppressionController;
+use App\Http\Controllers\Mail\TemplateController;
 use App\Http\Controllers\Teams\TeamInvitationController;
 use App\Http\Middleware\EnsureTeamMembership;
 use Illuminate\Support\Facades\Route;
@@ -43,10 +44,19 @@ Route::prefix('{current_team}')
             Route::post('domains/{identity}/refresh', [IdentityController::class, 'refresh'])->name('domains.refresh');
             Route::delete('domains/{identity}', [IdentityController::class, 'destroy'])->name('domains.destroy');
 
+            Route::get('templates', [TemplateController::class, 'index'])->name('templates.index');
+            Route::get('templates/create', [TemplateController::class, 'create'])->name('templates.create');
+            Route::post('templates', [TemplateController::class, 'store'])->name('templates.store');
+            Route::get('templates/{template}/edit', [TemplateController::class, 'edit'])->name('templates.edit');
+            Route::put('templates/{template}', [TemplateController::class, 'update'])->name('templates.update');
+            Route::delete('templates/{template}', [TemplateController::class, 'destroy'])->name('templates.destroy');
+
             Route::get('emails', [EmailController::class, 'index'])->name('emails.index');
             Route::get('emails/create', [EmailController::class, 'create'])->name('emails.create');
             Route::post('emails', [EmailController::class, 'store'])->name('emails.store');
             Route::get('emails/{message}', [EmailController::class, 'show'])->name('emails.show');
+            Route::post('emails/{message}/resend', [EmailController::class, 'resend'])->name('emails.resend');
+            Route::delete('emails/{message}/cancel', [EmailController::class, 'cancel'])->name('emails.cancel');
 
             Route::get('api-keys', [ApiKeyController::class, 'index'])->name('api-keys.index');
             Route::post('api-keys', [ApiKeyController::class, 'store'])->name('api-keys.store');

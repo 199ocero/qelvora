@@ -131,6 +131,14 @@ class TeamPolicy
     }
 
     /**
+     * Determine whether the user can manage the team's email templates.
+     */
+    public function manageTemplates(User $user, Team $team): bool
+    {
+        return $user->hasTeamPermission($team, TeamPermission::ManageMailTemplates);
+    }
+
+    /**
      * Determine whether the user can manage the team's suppression list.
      */
     public function manageSuppressions(User $user, Team $team): bool

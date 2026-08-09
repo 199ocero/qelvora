@@ -4,6 +4,7 @@ namespace App\Enums;
 
 enum EmailMessageStatus: string
 {
+    case Scheduled = 'scheduled';
     case Queued = 'queued';
     case Sent = 'sent';
     case Delivered = 'delivered';
@@ -18,6 +19,7 @@ enum EmailMessageStatus: string
     public function label(): string
     {
         return match ($this) {
+            self::Scheduled => 'Scheduled',
             self::Queued => 'Queued',
             self::Sent => 'Sent',
             self::Delivered => 'Delivered',
@@ -35,6 +37,7 @@ enum EmailMessageStatus: string
     public function rank(): int
     {
         return match ($this) {
+            self::Scheduled => 0,
             self::Queued => 0,
             self::Sent => 1,
             self::Delivered => 2,

@@ -191,6 +191,7 @@ trait HasTeams
             canManageDomains: $role?->hasPermission(TeamPermission::ManageMailDomains) ?? false,
             canSendEmail: $role?->hasPermission(TeamPermission::SendEmail) ?? false,
             canViewEmails: $role?->hasPermission(TeamPermission::ViewEmails) ?? false,
+            canManageTemplates: $role?->hasPermission(TeamPermission::ManageMailTemplates) ?? false,
             canManageSuppressions: $role?->hasPermission(TeamPermission::ManageSuppressions) ?? false,
             canManageApiKeys: $role?->hasPermission(TeamPermission::ManageApiKeys) ?? false,
         );

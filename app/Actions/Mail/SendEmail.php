@@ -12,6 +12,7 @@ use App\Models\EmailMessage;
 use App\Models\Team;
 use App\Services\Mail\Data\OutgoingMessage;
 use App\Services\Mail\MailProviderManager;
+use Carbon\CarbonInterface;
 use Illuminate\Support\Str;
 use Throwable;
 
@@ -34,6 +35,8 @@ class SendEmail
         string $sentVia = 'api',
         ?int $apiKeyId = null,
         bool $queue = false,
+        ?int $templateId = null,
+        ?CarbonInterface $scheduledAt = null,
     ): EmailMessage {
         $connection = $team->activeConnection();
 
@@ -53,6 +56,8 @@ class SendEmail
             throw new RecipientSuppressedException($suppressed->all());
         }
 
+        $scheduled = $scheduledAt !== null && $scheduledAt->isFuture();
+
         $record = $team->emailMessages()->create([
             'provider_connection_id' => $connection->id,
             'provider' => $connection->provider,
@@ -61,11 +66,18 @@ class SendEmail
             'subject' => $message->subject,
             'html' => $message->html,
             'text' => $message->text,
-            'status' => EmailMessageStatus::Queued,
+            'status' => $scheduled ? EmailMessageStatus::Scheduled : EmailMessageStatus::Queued,
             'sent_via' => $sentVia,
             'api_key_id' => $apiKeyId,
+            'email_template_id' => $templateId,
             'tags' => $message->tags,
+            'scheduled_at' => $scheduled ? $scheduledAt : null,
         ]);
+
+        // Held until the scheduler dispatches it; see SendScheduledEmails.
+        if ($scheduled) {
+            return $record;
+        }
 
         if ($queue) {
             SendQueuedEmail::dispatch($record);
@@ -76,6 +88,19 @@ class SendEmail
         $this->deliver($record);
 
         return $record->fresh();
+    }
+
+    /**
+     * Move a scheduled message into the sending queue.
+     */
+    public function release(EmailMessage $record): void
+    {
+        $record->update([
+            'status' => EmailMessageStatus::Queued,
+            'scheduled_at' => null,
+        ]);
+
+        SendQueuedEmail::dispatch($record);
     }
 
     /**

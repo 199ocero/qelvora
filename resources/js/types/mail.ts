@@ -23,6 +23,7 @@ export type IdentityStatus =
     'not_started' | 'pending' | 'verified' | 'failed' | 'temporary_failure';
 
 export type EmailMessageStatus =
+    | 'scheduled'
     | 'queued'
     | 'sent'
     | 'delivered'
@@ -120,7 +121,28 @@ export type EmailMessage = {
     clicksCount: number;
     error: string | null;
     lastEventAt: string | null;
+    scheduledAt: string | null;
     createdAt: string;
+};
+
+export type EmailTemplate = {
+    id: number;
+    name: string;
+    slug: string;
+    subject: string | null;
+    html?: string | null;
+    text?: string | null;
+    variables: string[];
+    createdAt: string;
+    updatedAt: string;
+};
+
+export type EmailLogFilters = {
+    search: string | null;
+    status: string | null;
+    via: string | null;
+    from: string | null;
+    to: string | null;
 };
 
 export type EmailEvent = {
@@ -160,6 +182,7 @@ export type MailPermissions = {
     canManageDomains: boolean;
     canSendEmail: boolean;
     canViewEmails: boolean;
+    canManageTemplates: boolean;
     canManageSuppressions: boolean;
     canManageApiKeys: boolean;
 };

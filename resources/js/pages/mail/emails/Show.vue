@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { Head, usePage } from '@inertiajs/vue3';
-import { ArrowLeft } from '@lucide/vue';
+import { Form, Head, usePage } from '@inertiajs/vue3';
+import { ArrowLeft, RefreshCw, X } from '@lucide/vue';
 import { computed } from 'vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -13,10 +13,21 @@ type Props = {
     events: EmailEvent[];
 };
 
-defineProps<Props>();
+const props = defineProps<Props>();
 
 const page = usePage();
 const slug = computed(() => page.props.currentTeam?.slug ?? '');
+
+const canSend = computed(() => page.props.mailPermissions?.canSendEmail);
+const canResend = computed(
+    () =>
+        canSend.value &&
+        (props.message.status === 'failed' ||
+            props.message.status === 'rejected'),
+);
+const canCancel = computed(
+    () => canSend.value && props.message.status === 'scheduled',
+);
 
 defineOptions({
     layout: (layoutProps: { currentTeam?: { slug: string } | null }) => ({
@@ -70,10 +81,52 @@ function formatDate(value: string | null): string {
                     {{ message.fromAddress }} → {{ message.to.join(', ') }}
                 </p>
             </div>
+
+            <Form
+                v-if="canResend"
+                v-bind="mail.emails.resend.form([slug, message.id])"
+                v-slot="{ processing }"
+            >
+                <Button
+                    type="submit"
+                    variant="outline"
+                    size="sm"
+                    :disabled="processing"
+                    data-test="resend-email"
+                >
+                    <RefreshCw class="size-4" />
+                    Resend
+                </Button>
+            </Form>
+
+            <Form
+                v-if="canCancel"
+                v-bind="mail.emails.cancel.form([slug, message.id])"
+                v-slot="{ processing }"
+            >
+                <Button
+                    type="submit"
+                    variant="outline"
+                    size="sm"
+                    :disabled="processing"
+                    data-test="cancel-email"
+                >
+                    <X class="size-4" />
+                    Cancel
+                </Button>
+            </Form>
+
             <Badge :variant="statusVariant(message.status)">{{
                 message.statusLabel
             }}</Badge>
         </div>
+
+        <p
+            v-if="message.status === 'scheduled' && message.scheduledAt"
+            class="rounded-md border border-dashed px-4 py-2 text-sm text-muted-foreground"
+        >
+            Scheduled to send on {{ formatDate(message.scheduledAt) }}.
+        </p>
 
         <div class="grid gap-6 lg:grid-cols-3">
             <Card class="lg:col-span-2">

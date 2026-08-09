@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Form, Head, usePage } from '@inertiajs/vue3';
 import { ChevronDown, Send } from '@lucide/vue';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
 import {
@@ -15,15 +15,35 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import mail from '@/routes/mail';
+import type { EmailTemplate } from '@/types';
 
 type Props = {
     senders: string[];
+    templates: EmailTemplate[];
 };
 
-defineProps<Props>();
+const props = defineProps<Props>();
 
 const page = usePage();
 const slug = computed(() => page.props.currentTeam?.slug ?? '');
+
+const subject = ref('');
+const html = ref('');
+const scheduledAt = ref('');
+const selectedTemplate = ref('');
+
+function applyTemplate() {
+    const template = props.templates.find(
+        (candidate) => String(candidate.id) === selectedTemplate.value,
+    );
+
+    if (!template) {
+        return;
+    }
+
+    subject.value = template.subject ?? '';
+    html.value = template.html ?? template.text ?? '';
+}
 
 defineOptions({
     layout: (layoutProps: { currentTeam?: { slug: string } | null }) => ({
@@ -69,6 +89,35 @@ defineOptions({
                     class="space-y-4"
                     v-slot="{ errors, processing }"
                 >
+                    <div v-if="templates.length" class="grid gap-2">
+                        <Label for="template">Template</Label>
+                        <div class="relative">
+                            <select
+                                id="template"
+                                v-model="selectedTemplate"
+                                class="h-9 w-full appearance-none rounded-md border border-input bg-transparent py-1 pr-9 pl-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:bg-input/30"
+                                data-test="template-picker"
+                                @change="applyTemplate"
+                            >
+                                <option value="">Start from scratch</option>
+                                <option
+                                    v-for="template in templates"
+                                    :key="template.id"
+                                    :value="String(template.id)"
+                                >
+                                    {{ template.name }}
+                                </option>
+                            </select>
+                            <ChevronDown
+                                class="pointer-events-none absolute top-1/2 right-3 size-4 -translate-y-1/2 text-muted-foreground"
+                            />
+                        </div>
+                        <p class="text-xs text-muted-foreground">
+                            Prefill the subject and body from a saved template,
+                            then edit before sending.
+                        </p>
+                    </div>
+
                     <div class="grid gap-2">
                         <Label for="from">From</Label>
                         <div class="relative">
@@ -122,7 +171,7 @@ defineOptions({
 
                     <div class="grid gap-2">
                         <Label for="subject">Subject</Label>
-                        <Input id="subject" name="subject" required />
+                        <Input id="subject" v-model="subject" name="subject" />
                         <InputError :message="errors.subject" />
                     </div>
 
@@ -130,10 +179,26 @@ defineOptions({
                         <Label for="html">HTML body</Label>
                         <Textarea
                             id="html"
+                            v-model="html"
                             name="html"
                             class="min-h-48 font-mono text-sm"
                         />
                         <InputError :message="errors.html" />
+                    </div>
+
+                    <div class="grid gap-2">
+                        <Label for="scheduled_at">Schedule for later</Label>
+                        <Input
+                            id="scheduled_at"
+                            v-model="scheduledAt"
+                            name="scheduled_at"
+                            type="datetime-local"
+                            data-test="schedule-at"
+                        />
+                        <p class="text-xs text-muted-foreground">
+                            Leave empty to send now.
+                        </p>
+                        <InputError :message="errors.scheduled_at" />
                     </div>
 
                     <Button
@@ -142,7 +207,7 @@ defineOptions({
                         data-test="send-email"
                     >
                         <Send class="size-4" />
-                        Send
+                        {{ scheduledAt ? 'Schedule' : 'Send' }}
                     </Button>
                 </Form>
             </CardContent>

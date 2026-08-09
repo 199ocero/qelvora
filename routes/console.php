@@ -27,3 +27,7 @@ Schedule::call(function () {
             }
         });
 })->hourly()->description('Sync active mail provider health and suppressions');
+
+Schedule::command('mail:send-scheduled')
+    ->everyMinute()
+    ->description('Release scheduled emails that are now due');

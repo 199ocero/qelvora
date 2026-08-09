@@ -33,6 +33,7 @@ enum TeamRole: string
                 TeamPermission::ManageMailDomains,
                 TeamPermission::SendEmail,
                 TeamPermission::ViewEmails,
+                TeamPermission::ManageMailTemplates,
                 TeamPermission::ManageSuppressions,
                 TeamPermission::ManageApiKeys,
             ],

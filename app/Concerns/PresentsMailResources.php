@@ -5,6 +5,7 @@ namespace App\Concerns;
 use App\Models\ApiKey;
 use App\Models\EmailEvent;
 use App\Models\EmailMessage;
+use App\Models\EmailTemplate;
 use App\Models\MailIdentity;
 use App\Models\ProviderConnection;
 use App\Models\Suppression;
@@ -77,6 +78,7 @@ trait PresentsMailResources
             'clicksCount' => $message->clicks_count,
             'error' => $message->error,
             'lastEventAt' => $message->last_event_at?->toIso8601String(),
+            'scheduledAt' => $message->scheduled_at?->toIso8601String(),
             'createdAt' => $message->created_at?->toIso8601String(),
         ], $withBody ? [
             'html' => $message->html,
@@ -115,6 +117,25 @@ trait PresentsMailResources
             'suppressedAt' => $suppression->suppressed_at?->toIso8601String(),
             'createdAt' => $suppression->created_at?->toIso8601String(),
         ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    protected function presentTemplate(EmailTemplate $template, bool $withBody = false): array
+    {
+        return array_merge([
+            'id' => $template->id,
+            'name' => $template->name,
+            'slug' => $template->slug,
+            'subject' => $template->subject,
+            'variables' => $template->variableNames(),
+            'createdAt' => $template->created_at?->toIso8601String(),
+            'updatedAt' => $template->updated_at?->toIso8601String(),
+        ], $withBody ? [
+            'html' => $template->html,
+            'text' => $template->text,
+        ] : []);
     }
 
     /**

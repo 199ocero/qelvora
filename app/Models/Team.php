@@ -139,6 +139,16 @@ class Team extends Model
     }
 
     /**
+     * Get all email templates for this team.
+     *
+     * @return HasMany<EmailTemplate, $this>
+     */
+    public function emailTemplates(): HasMany
+    {
+        return $this->hasMany(EmailTemplate::class);
+    }
+
+    /**
      * Get all suppressions for this team.
      *
      * @return HasMany<Suppression, $this>
