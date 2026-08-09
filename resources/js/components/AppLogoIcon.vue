@@ -15,15 +15,32 @@ defineProps<Props>();
 <template>
     <svg
         xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 40 42"
+        viewBox="0 0 24 24"
+        fill="none"
         :class="className"
         v-bind="$attrs"
     >
+        <!-- motion trail: a dotted launch trajectory in the inherited color -->
         <path
-            fill="currentColor"
-            fill-rule="evenodd"
-            clip-rule="evenodd"
-            d="M17.2 5.633 8.6.855 0 5.633v26.51l16.2 9 16.2-9v-8.442l7.6-4.223V9.856l-8.6-4.777-8.6 4.777V18.3l-5.6 3.111V5.633ZM38 18.301l-5.6 3.11v-6.157l5.6-3.11V18.3Zm-1.06-7.856-5.54 3.078-5.54-3.079 5.54-3.078 5.54 3.079ZM24.8 18.3v-6.157l5.6 3.111v6.158L24.8 18.3Zm-1 1.732 5.54 3.078-13.14 7.302-5.54-3.078 13.14-7.3v-.002Zm-16.2 7.89 7.6 4.222V38.3L2 30.966V7.92l5.6 3.111v16.892ZM8.6 9.3 3.06 6.222 8.6 3.143l5.54 3.08L8.6 9.3Zm21.8 15.51-13.2 7.334V38.3l13.2-7.334v-6.156ZM9.6 11.034l5.6-3.11v14.6l-5.6 3.11v-14.6Z"
+            d="M3 20.6C5.1 18.2 7.6 15.6 10.4 13.2"
+            stroke="currentColor"
+            stroke-width="1.7"
+            stroke-linecap="round"
+            stroke-dasharray="0.1 3.2"
+            opacity="0.85"
         />
+        <circle cx="2.6" cy="21" r="1.15" fill="currentColor" />
+
+        <!-- paper plane, brand-primary with a two-tone fold -->
+        <g stroke="var(--primary)" stroke-width="1.3" stroke-linejoin="round">
+            <!-- upper wing: lighter facet -->
+            <path
+                d="M21.5 2.5 2.8 9.2 11 12.8Z"
+                fill="var(--primary)"
+                fill-opacity="0.5"
+            />
+            <!-- body -->
+            <path d="M21.5 2.5 11 12.8 14.6 21Z" fill="var(--primary)" />
+        </g>
     </svg>
 </template>
