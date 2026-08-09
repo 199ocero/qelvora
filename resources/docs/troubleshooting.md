@@ -2,7 +2,7 @@
 title: Troubleshooting
 description: Fixes for the problems you are most likely to hit.
 section: Reference
-order: 12
+order: 15
 ---
 
 Most problems come from doing steps out of order: a missing provider, a domain that is not verified, or a webhook that cannot be reached. Here are the common ones and how to fix them.
@@ -44,6 +44,12 @@ The message shows **Sent** but never **Delivered**, and there are no opens or bo
 1. On **Provider**, click **Set up webhook again** and read the result.
 2. If it fails, add SNS access to your key (the [AmazonSNSFullAccess](https://docs.aws.amazon.com/aws-managed-policy/latest/reference/AmazonSNSFullAccess.html) managed policy is the quickest way) and run it again.
 3. On your own machine, make sure a tunnel is running and its address is saved in the **Local webhook tunnel** field, then set up the webhook again. See [Webhooks](/docs/webhooks).
+
+## My scheduled email never sent
+
+The message is stuck on **Scheduled** long after its time has passed.
+
+**Fix:** Scheduled email is sent by a task that runs every minute, so that task must be running. If you self-host, make sure your scheduler is running (the Docker setup includes a scheduler service for this). See [Schedule email](/docs/scheduled-email).
 
 ## A send is stopped as "blocked"
 

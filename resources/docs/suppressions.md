@@ -2,7 +2,7 @@
 title: Suppressions
 description: Keep bad addresses off your sends, automatically and by hand.
 section: Sending
-order: 7
+order: 10
 ---
 
 A suppression is an address you do not want to email. Sending to hard bounces and people who marked you as spam hurts your reputation, so Xelqun keeps a blocked list for your team and stops any send to an address on it.

@@ -2,7 +2,7 @@
 title: Send API reference
 description: The API endpoint for sending email from your app.
 section: Developers
-order: 9
+order: 12
 ---
 
 The send API is one endpoint that sends a message through your team's active provider. Use an [API key](/docs/api-keys) to sign in.
@@ -22,15 +22,20 @@ Content-Type: application/json
 
 ## Request body
 
-| Field     | Type            | Required | Notes                                                           |
-| --------- | --------------- | -------- | --------------------------------------------------------------- |
-| `from`    | string          | yes      | Must be a verified sender (an address or a verified domain).    |
-| `to`      | string or array | yes      | One recipient, a list of up to 50, or a comma-separated string. |
-| `subject` | string          | yes      | Up to 255 characters.                                           |
-| `html`    | string          | no*      | HTML message.                                                   |
-| `text`    | string          | no*      | Plain text message.                                             |
+| Field          | Type            | Required | Notes                                                                                                 |
+| -------------- | --------------- | -------- | ----------------------------------------------------------------------------------------------------- |
+| `from`         | string          | yes      | Must be a verified sender (an address or a verified domain).                                          |
+| `to`           | string or array | yes      | One recipient, a list of up to 50, or a comma-separated string.                                       |
+| `subject`      | string          | yes\*\*  | Up to 255 characters.                                                                                 |
+| `html`         | string          | no\*     | HTML message.                                                                                         |
+| `text`         | string          | no\*     | Plain text message.                                                                                   |
+| `template_id`  | number          | no       | Use a saved [template](/docs/templates) for the subject and body.                                     |
+| `variables`    | object          | no       | Values for the template's `{{ fields }}`, like `{ "name": "Dana" }`.                                  |
+| `scheduled_at` | string          | no       | A future time to send instead of now. Any format a date parser reads, such as `2026-08-20T09:00:00Z`. |
 
-\* Send `html`, `text`, or both. You need at least one.
+\* Send `html`, `text`, or both. You need at least one, unless you use a `template_id`, which supplies the body.
+
+\*\* `subject` is required unless you use a `template_id`, which supplies the subject.
 
 ```json
 {
@@ -41,6 +46,35 @@ Content-Type: application/json
     "text": "Welcome! Glad to have you."
 }
 ```
+
+### Send with a template
+
+Give a `template_id` and the values for its fields. Xelqun builds the subject and body for you, so you do not send the full HTML:
+
+```json
+{
+    "from": "hello@example.com",
+    "to": "user@example.com",
+    "template_id": 12,
+    "variables": { "name": "Dana", "order": "1001" }
+}
+```
+
+### Schedule for later
+
+Add a future `scheduled_at` time and the message is held until then:
+
+```json
+{
+    "from": "hello@example.com",
+    "to": "user@example.com",
+    "subject": "Reminder",
+    "html": "<p>Your trial ends tomorrow.</p>",
+    "scheduled_at": "2026-08-20T09:00:00Z"
+}
+```
+
+A scheduled send is accepted the same way, with a `scheduled` status. It sends when the time arrives. You can cancel it from the message page before then.
 
 ## A successful response
 

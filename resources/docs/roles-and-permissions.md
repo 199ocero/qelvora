@@ -2,7 +2,7 @@
 title: Roles & permissions
 description: Who on your team can do what.
 section: Reference
-order: 11
+order: 14
 ---
 
 Everything in Xelqun belongs to a team, and each member has a role that sets what they can do. Roles are the same across the whole product. This page is about the email permissions.
@@ -19,6 +19,8 @@ Everything in Xelqun belongs to a team, and each member has a role that sets wha
 | ---------------------------- | :---: | :---: | :----: |
 | View the email log           |  Yes  |  Yes  |  Yes   |
 | Send email                   |  Yes  |  Yes  |  Yes   |
+| Use email templates          |  Yes  |  Yes  |  Yes   |
+| Manage email templates       |  Yes  |  Yes  |   No   |
 | Manage domains               |  Yes  |  Yes  |   No   |
 | Manage blocked addresses     |  Yes  |  Yes  |   No   |
 | Manage API keys              |  Yes  |  Yes  |   No   |
@@ -26,7 +28,7 @@ Everything in Xelqun belongs to a team, and each member has a role that sets wha
 
 What this means in practice:
 
-- **Members** are senders. They write and send email, and they can see what was sent, but they do not change setup.
+- **Members** are senders. They write and send email, use saved templates, and can see what was sent, but they do not change setup or manage templates.
 - **Admins** run the operation: domains, blocked addresses, and API keys. The SES keys stay with owners.
 - **Owners** also hold the provider connection, since that is the most sensitive part.
 

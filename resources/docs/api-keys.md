@@ -2,7 +2,7 @@
 title: API keys
 description: Create a key so your app can send through Xelqun.
 section: Developers
-order: 8
+order: 11
 ---
 
 An API key lets your own app send email through Xelqun's API. You manage keys on the **API keys** screen, and they belong to your team.

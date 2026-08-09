@@ -109,15 +109,15 @@ SES delivers the email. Xelqun runs the operations around it. If you're running 
 
 ## Roadmap
 
-### V1: MVP (in progress)
+### V1: MVP (complete)
 Everything you need to operate Amazon SES in production. This is the whole focus.
 
 - [x] Amazon SES support
 - [x] Transactional email API
-- [ ] Email templates
-- [ ] Email logs & searchable history _(logs and event timeline done, search/filter pending)_
-- [ ] Retry queues & failed email management _(queued sending done, failed-email management/resend pending)_
-- [ ] Scheduled emails
+- [x] Email templates
+- [x] Email logs & searchable history
+- [x] Retry queues & failed email management
+- [x] Scheduled emails
 - [x] Bounce & complaint handling
 - [x] Suppression lists
 - [x] Webhook processing
@@ -125,7 +125,7 @@ Everything you need to operate Amazon SES in production. This is the whole focus
 - [x] Domain verification
 - [x] Multi-project support _(via teams)_
 - [x] Team management
-- [ ] Docker deployment
+- [x] Docker deployment
 
 ### V2: Advanced
 Resilience, insight, and optionally marketing email. Not started.
@@ -153,6 +153,30 @@ Resilience, insight, and optionally marketing email. Not started.
 ## Getting started
 
 Installation and setup instructions are coming soon, once the MVP stabilizes.
+
+### Docker deployment
+
+Xelqun ships with a Docker Compose stack for self-hosting. It runs five services: the web app (nginx and php-fpm), a queue worker, a scheduler, PostgreSQL, and Redis.
+
+1. Copy the example env file and set your values:
+
+   ```bash
+   cp .env.example .env
+   ```
+
+   Set at least `APP_KEY` (generate one with `php artisan key:generate --show`), `APP_URL`, and `DB_PASSWORD`. Add your AWS credentials later from the in-app connection screen.
+
+2. Build and start the stack:
+
+   ```bash
+   docker compose up -d --build
+   ```
+
+   The web container runs database migrations on startup, so the app is ready once it is healthy. It is safe to run again.
+
+3. Open the app at `http://localhost:8000` (change the port with `APP_PORT`).
+
+The `worker` service sends queued email and the `scheduler` service runs the every-minute jobs, including releasing scheduled emails. Both reuse the same image as the app.
 
 ## License
 

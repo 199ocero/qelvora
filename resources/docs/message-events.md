@@ -2,7 +2,7 @@
 title: Message events
 description: How delivery, open, click, bounce, and complaint events reach Xelqun.
 section: Sending
-order: 6
+order: 9
 ---
 
 Every message has a history: an ordered list of what happened to it after you sent it. This is where you confirm a message was delivered, see who opened or clicked, and catch bounces and spam complaints.

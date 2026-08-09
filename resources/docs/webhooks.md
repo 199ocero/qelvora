@@ -2,7 +2,7 @@
 title: Webhooks
 description: How Xelqun receives SES events, and how to fix them when they stop.
 section: Developers
-order: 10
+order: 13
 ---
 
 Xelqun gets delivery events from Amazon SES through a webhook. You do not build or host this yourself. It is set up when you connect a provider. Still, knowing how it works helps when events are not showing up.

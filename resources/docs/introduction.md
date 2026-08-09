@@ -13,7 +13,9 @@ Your mail setup does not move. You connect your SES keys, and Xelqun becomes the
 
 Amazon SES is cheap and reliable, but plain. It has no easy way to browse what you sent, no clear view of bounces and spam complaints, and no team roles. Xelqun adds those:
 
-- See every email you send, with a live history of what happened to it.
+- See every email you send, with a live history of what happened to it, and search or filter the log.
+- Save emails as templates and fill in the blanks when you send.
+- Schedule email for a later time, and resend the ones that fail.
 - Bad addresses get blocked on their own, so you stop emailing them.
 - Manage domains, senders, blocked addresses, and API keys in one place.
 - Let your own app send email through a simple API.
