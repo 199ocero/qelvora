@@ -1,15 +1,15 @@
 # Qelvora
 
-**An open-source email operations platform that transforms Amazon SES into a production-ready email service — with dashboards, logs, retries, webhooks, suppression management, analytics, and team collaboration — while keeping your email infrastructure entirely under your own AWS account.**
+**An open-source email operations platform for Amazon SES. It adds the dashboards, logs, retries, webhooks, suppression management, and team tools that SES doesn't give you, while your email keeps running inside your own AWS account.**
 
-> ⚠️ **Status: Under active development — not usable yet.**
-> Qelvora is being built in the open and is **not production-ready**. Features listed below are planned or in progress. There is no stable release, and you should not rely on it for anything real at this time.
+> ⚠️ **Status: Under active development. Not usable yet.**
+> Qelvora is being built in the open and is not production-ready. The features below are planned or in progress. There is no stable release, so don't rely on it for anything real yet.
 
 ---
 
 ## What is Qelvora?
 
-Qelvora is a self-hosted **email operations platform** that sits on top of your own email provider. It does **not** replace Amazon SES or become another email provider — instead, it provides the operational tooling that SES lacks.
+Qelvora is a self-hosted email operations platform that sits on top of Amazon SES. It does not replace SES or become another email provider. It gives you the operational tooling that SES leaves out.
 
 ```mermaid
 flowchart LR
@@ -18,17 +18,47 @@ flowchart LR
 ```
 
 > **The open-source control plane for Amazon SES.**
-> The easiest way to operate Amazon SES in production.
 
-Qelvora focuses on **email operations**, not email delivery. The architecture is provider-agnostic from day one, but the MVP targets **Amazon SES only**.
+Qelvora focuses on email operations, not email delivery. The architecture is provider-agnostic from day one, but the MVP targets Amazon SES only.
 
 ## Why Qelvora?
 
-Instead of building all the operational tooling yourself, connect your AWS account and instantly get a production-ready email platform — dashboards, logs, retries, bounce/complaint handling, suppression lists, and team management, all running on **your own infrastructure**.
+Connect your AWS account and get a working email platform right away: dashboards, logs, retries, bounce and complaint handling, suppression lists, and team management. It all runs on your own infrastructure, so you don't have to build any of it yourself.
+
+### Why not just point my app at SES directly?
+
+For basic sending, you should. If all you need is `App -> SES`, Qelvora adds nothing. SES already gives you SMTP and an API, and most frameworks already have a mailer that talks to it. Qelvora is not an easier way to send email.
+
+The value shows up once email becomes something you have to operate, not just call. When you're sending real volume, SES leaves these gaps for you to fill:
+
+- **Where did my email go?** You want a searchable history of every message and its status (queued, sent, accepted, delivered), not a send call that returns nothing.
+- **Why didn't the customer receive it?** SES reports bounces, complaints, and deliveries, but only if you build the pipeline yourself: SNS, a webhook endpoint, a queue, a database, and a dashboard. Qelvora is that pipeline.
+- **Suppression management.** A permanent bounce should stop you from ever emailing that address again. You don't want to rebuild this in every app.
+- **Debugging.** When someone asks why John didn't get his password reset, you want one timeline (app accepted, queued, SES accepted, delivered) instead of digging through CloudWatch, app logs, SES, and SNS.
+
+So Qelvora isn't a nicer way to use SES. It's the operations layer around email delivery.
+
+```mermaid
+flowchart TB
+    subgraph Q["Qelvora (the control plane)"]
+        direction LR
+        L["Logs & history"]
+        E["Events"]
+        W["Webhooks"]
+        S["Suppression"]
+        R["Retries"]
+        D["Debugging"]
+        T["Team management"]
+    end
+    Q --> SES["Amazon SES<br/><i>delivery, in your AWS account</i>"]
+    SES --> Net["The internet"]
+```
+
+SES delivers the email. Qelvora runs the operations around it. If you're running a SaaS and email has become infrastructure you operate rather than a function you call, Qelvora is for you.
 
 ## Who it's for
 
-- Laravel developers
+- Developers and engineering teams
 - SaaS founders
 - Agencies
 - Companies already using AWS
@@ -37,7 +67,7 @@ Instead of building all the operational tooling yourself, connect your AWS accou
 
 ## Planned MVP features
 
-> MVP supports **Amazon SES only**. Additional providers arrive in later versions.
+> The MVP supports Amazon SES only. Other providers come later.
 
 **Email Sending**
 - Transactional Email API
@@ -79,25 +109,25 @@ Instead of building all the operational tooling yourself, connect your AWS accou
 
 ## Roadmap
 
-### V1 — MVP (in progress)
+### V1: MVP (in progress)
 Everything you need to operate Amazon SES in production.
 
-- [ ] Amazon SES support
-- [ ] Transactional email API
+- [x] Amazon SES support
+- [x] Transactional email API
 - [ ] Email templates
-- [ ] Email logs & searchable history
-- [ ] Retry queues & failed email management
+- [ ] Email logs & searchable history _(logs and event timeline done, search/filter pending)_
+- [ ] Retry queues & failed email management _(queued sending done, failed-email management/resend pending)_
 - [ ] Scheduled emails
-- [ ] Bounce & complaint handling
-- [ ] Suppression lists
-- [ ] Webhook processing
-- [ ] API keys
-- [ ] Domain verification
-- [ ] Multi-project support
-- [ ] Team management
+- [x] Bounce & complaint handling
+- [x] Suppression lists
+- [x] Webhook processing
+- [x] API keys
+- [x] Domain verification
+- [x] Multi-project support _(via teams)_
+- [x] Team management
 - [ ] Docker deployment
 
-### V2 — More providers
+### V2: More providers
 Make Qelvora provider-agnostic in practice, not just in architecture.
 
 - [ ] Postmark
@@ -107,8 +137,8 @@ Make Qelvora provider-agnostic in practice, not just in architecture.
 - [ ] Unified provider abstraction
 - [ ] Event normalization across providers
 
-### V3 — Advanced
-Resilience, insight, and (optionally) marketing email.
+### V3: Advanced
+Resilience, insight, and optionally marketing email.
 
 - [ ] Provider failover
 - [ ] Multi-provider routing
@@ -135,7 +165,7 @@ Resilience, insight, and (optionally) marketing email.
 
 ## Getting started
 
-Installation and setup instructions are **coming soon** once the MVP stabilizes.
+Installation and setup instructions are coming soon, once the MVP stabilizes.
 
 ## License
 
