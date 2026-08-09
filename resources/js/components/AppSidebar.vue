@@ -83,7 +83,6 @@ const mailNavItems = computed<NavItem[]>(() => {
 
     return items;
 });
-
 </script>
 
 <template>
