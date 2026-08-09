@@ -15,9 +15,9 @@ Xelqun does not keep asking SES for updates. Instead, SES sends events to Xelqun
 Your send  ->  Amazon SES  ->  Amazon SNS  ->  Xelqun webhook  ->  message history
 ```
 
-When you connect a provider, Xelqun sets up the SES and SNS pieces that send each event to a private web address that only your connection uses. Xelqun checks that the event is really from AWS, saves it, and updates the message.
+When you connect Amazon SES, Xelqun sets up the SES and SNS pieces that send each event to a private web address that only your connection uses. Xelqun checks that the event is really from AWS, saves it, and updates the message.
 
-Because this runs on a webhook, events only arrive if that web address can be reached. If your history never gets past **Sent**, check the webhook first. See [Webhooks](/docs/webhooks), and for your own machine, the tunnel steps in [Connect a provider](/docs/connect-a-provider).
+Because this runs on a webhook, events only arrive if that web address can be reached. If your history never gets past **Sent**, check the webhook first. See [Webhooks](/docs/webhooks), and for your own machine, the tunnel steps in [Connect Amazon SES](/docs/connect-a-provider).
 
 ## Event types
 

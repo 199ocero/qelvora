@@ -126,7 +126,7 @@ function statusVariant(status: IdentityStatus) {
             v-else
             class="rounded-lg border border-dashed p-6 text-center text-sm text-muted-foreground"
         >
-            Connect an email provider before adding sending domains.
+            Connect Amazon SES before adding sending domains.
         </p>
 
         <div class="space-y-3">

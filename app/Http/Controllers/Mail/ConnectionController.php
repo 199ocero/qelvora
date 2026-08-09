@@ -86,7 +86,7 @@ class ConnectionController extends Controller
 
         $switchProvider->handle($team, $this->resolveConnection($request));
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => __('Active provider switched.')]);
+        Inertia::flash('toast', ['type' => 'success', 'message' => __('Active connection switched.')]);
 
         return to_route('mail.connection.index');
     }

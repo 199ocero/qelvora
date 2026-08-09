@@ -98,7 +98,7 @@ function remove(suppression: Suppression) {
                     @click="sync"
                 >
                     <RefreshCw class="size-4" />
-                    Sync from provider
+                    Sync from SES
                 </Button>
             </div>
         </div>

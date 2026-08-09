@@ -5,7 +5,7 @@ section: Sending
 order: 5
 ---
 
-With a provider connected and a domain verified, you can send. The **Emails** screen is both your sent list and your log. Every email sent through Xelqun, from the dashboard or the API, shows up here.
+With Amazon SES connected and a domain verified, you can send. The **Emails** screen is both your sent list and your log. Every email sent through Xelqun, from the dashboard or the API, shows up here.
 
 ## Writing a message
 
@@ -27,7 +27,7 @@ Two optional fields sit on the same form:
 
 A send is stopped, with a clear message, if any of these is true:
 
-- **No active provider.** Connect one on the Provider screen.
+- **No active connection.** Connect Amazon SES on the Connection screen.
 - **The sender is not verified.** The from address must belong to a verified domain or address.
 - **A recipient is blocked.** If any recipient is on your [blocked list](/docs/suppressions), the send is stopped so you do not email a known bad address.
 

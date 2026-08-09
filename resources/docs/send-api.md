@@ -5,7 +5,7 @@ section: Developers
 order: 12
 ---
 
-The send API is one endpoint that sends a message through your team's active provider. Use an [API key](/docs/api-keys) to sign in.
+The send API is one endpoint that sends a message through your team's Amazon SES connection. Use an [API key](/docs/api-keys) to sign in.
 
 ## Endpoint
 
@@ -98,7 +98,7 @@ After that, track the message on its page in the dashboard, where its [history](
 | Status              | Meaning                                          | Body                                          |
 | ------------------- | ------------------------------------------------ | --------------------------------------------- |
 | `401 Unauthorized`  | Missing, wrong, or revoked API key               | None                                          |
-| `409 Conflict`      | The team has no active provider                  | `{ "message": "..." }`                        |
+| `409 Conflict`      | The team has no active Amazon SES connection     | `{ "message": "..." }`                        |
 | `422 Unprocessable` | Validation failed, or the sender is not verified | `{ "message": "..." }`                        |
 | `422 Unprocessable` | A recipient is blocked                           | `{ "message": "...", "suppressed": ["..."] }` |
 
@@ -107,5 +107,5 @@ When a send is stopped for a blocked recipient, the `suppressed` list shows whic
 ## Notes
 
 - API sends are queued and sent in the background, which is why you get a `202` instead of waiting for SES.
-- The same rules as the dashboard apply: active provider, verified sender, no blocked recipients.
+- The same rules as the dashboard apply: active Amazon SES connection, verified sender, no blocked recipients.
 - Every API send shows up in the Emails log, marked as sent through the API, next to your dashboard sends.

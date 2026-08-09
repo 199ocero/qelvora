@@ -9,9 +9,9 @@ This is the fast path. Each step links to a full guide if you want more detail. 
 
 ## 1. Connect your SES account
 
-Open **Provider** and connect **Amazon SES** with your access key ID, secret access key, and region. Xelqun checks the keys and turns on event tracking for you.
+Open **Connection** and connect Amazon SES with your access key ID, secret access key, and region. Xelqun checks the keys and turns on event tracking for you.
 
-→ [Connect a provider](/docs/connect-a-provider)
+→ [Connect Amazon SES](/docs/connect-a-provider)
 
 ## 2. Verify a sending domain
 
@@ -45,7 +45,7 @@ If a screen looks empty or stops you, an earlier step is usually not done yet:
 
 | You want to                   | You need first                          |
 | ----------------------------- | --------------------------------------- |
-| Add a domain                  | An active provider connection           |
+| Add a domain                  | An active Amazon SES connection         |
 | Compose an email              | A verified sender                       |
 | See delivered and open events | Webhooks set up (done when you connect) |
 | Send with the API             | An API key and a verified sender        |

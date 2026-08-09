@@ -50,7 +50,7 @@ class IdentityController extends Controller
 
         $connection = $team->activeConnection();
 
-        abort_if($connection === null, 409, 'Connect an email provider first.');
+        abort_if($connection === null, 409, 'Connect Amazon SES first.');
 
         $identity = $createIdentity->handle(
             $connection,

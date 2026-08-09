@@ -19,11 +19,11 @@ There are three ways:
 
 On the **Suppressions** screen, enter the email address and, if you want, a note. Add it. From then on, any send to that address, from the dashboard or the API, is stopped.
 
-> Adding by hand and syncing both need an active provider connection.
+> Adding by hand and syncing both need an active Amazon SES connection.
 
 ## Syncing from SES
 
-Click **Sync from provider** to pull in the addresses SES already blocks. This is handy right after you connect an existing SES account that has been blocking addresses on its own.
+Click **Sync from SES** to pull in the addresses SES already blocks. This is handy right after you connect an existing SES account that has been blocking addresses on its own.
 
 ## Removing an address
 

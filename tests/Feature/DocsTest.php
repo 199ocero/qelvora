@@ -45,7 +45,7 @@ test('a page exposes previous and next neighbours', function () {
         ->assertInertia(fn (Assert $page) => $page
             ->component('docs/Show')
             ->where('prev.title', 'Introduction')
-            ->where('next.title', 'Connect a provider')
+            ->where('next.title', 'Connect Amazon SES')
         );
 });
 

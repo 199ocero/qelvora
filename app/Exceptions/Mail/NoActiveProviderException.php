@@ -8,6 +8,6 @@ class NoActiveProviderException extends RuntimeException
 {
     public function __construct()
     {
-        parent::__construct('No connected email provider is active for this team.');
+        parent::__construct('No active Amazon SES connection for this team.');
     }
 }

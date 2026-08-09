@@ -144,17 +144,16 @@ const trendTotals = computed(() => ({
                     >
                         <PlugZap class="size-4.5 text-muted-foreground" />
                     </div>
-                    Connect a provider to get started
+                    Connect Amazon SES to get started
                 </CardTitle>
                 <CardDescription>
-                    Connect Amazon SES (or another provider) to start sending
-                    and see analytics here.
+                    Connect Amazon SES to start sending and see analytics here.
                 </CardDescription>
             </CardHeader>
             <CardContent>
                 <Button as-child>
                     <Link :href="mail.connection.index.url(slug)"
-                        >Connect a provider</Link
+                        >Connect Amazon SES</Link
                     >
                 </Button>
             </CardContent>

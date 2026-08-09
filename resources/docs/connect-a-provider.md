@@ -1,13 +1,13 @@
 ---
-title: Connect a provider
+title: Connect Amazon SES
 description: Connect your Amazon SES account and turn on event tracking.
 section: Setup
 order: 3
 ---
 
-A provider connection links your Amazon SES account to your team. Set this up first. Domains, sending, and blocked addresses all need an active connection.
+The Amazon SES connection links your AWS account to your team. Set this up first. Domains, sending, and blocked addresses all need an active connection.
 
-> Xelqun works with Amazon SES only for now. More providers may come later.
+> Xelqun works with Amazon SES.
 
 ## What you need from AWS
 
@@ -37,7 +37,7 @@ If the SNS access is missing, the connection still works, but events will not ar
 
 ## Connecting
 
-1. Open **Provider**.
+1. Open **Connection**.
 2. Enter your access key, secret, and region.
 3. Submit.
 
@@ -51,7 +51,7 @@ Once connected, the screen shows your account health: your sending limit, your s
 
 ## Managing a connection
 
-The Provider screen gives you a few actions:
+The Connection screen gives you a few actions:
 
 - **Sync**: refresh your account health from SES.
 - **Set up webhook again**: retry the event setup. Use this if event delivery failed or you changed your permissions.
@@ -60,7 +60,7 @@ The Provider screen gives you a few actions:
 
 ## Local development: the webhook tunnel
 
-SES sends events to a public web address, so it cannot reach `http://localhost`. On your own machine, the Provider screen shows a **Local webhook tunnel** field:
+SES sends events to a public web address, so it cannot reach `http://localhost`. On your own machine, the Connection screen shows a **Local webhook tunnel** field:
 
 1. Start a tunnel with `herd share`, ngrok, Expose, or Cloudflare Tunnel.
 2. Paste the tunnel's public address into the field and save.
@@ -70,6 +70,6 @@ Xelqun reads this address on every request, so update it whenever your tunnel re
 
 ## The SES sandbox
 
-New SES accounts start in the sandbox. In the sandbox you can only send to addresses you have verified, and your daily limit is low. When you are ready to email anyone, ask AWS for production access in the SES console. Xelqun shows your sandbox status on the Provider screen.
+New SES accounts start in the sandbox. In the sandbox you can only send to addresses you have verified, and your daily limit is low. When you are ready to email anyone, ask AWS for production access in the SES console. Xelqun shows your sandbox status on the Connection screen.
 
 → Next: [Verify a domain](/docs/verify-a-domain)

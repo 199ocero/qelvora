@@ -24,7 +24,7 @@ Amazon SES is cheap and reliable, but plain. It has no easy way to browse what y
 
 Each step turns on the next one:
 
-1. **Provider**: connect your Amazon SES account. Nothing else works until this is done.
+1. **Connection**: connect your Amazon SES account. Nothing else works until this is done.
 2. **Domains**: add the domain or address you send from, and prove you own it with DNS records.
 3. **Emails**: send from a verified sender, and watch what happens to each message.
 4. **Suppressions**: bad addresses land here and are blocked from future sends.
@@ -34,6 +34,6 @@ The **Overview** page sits on top and shows your recent sending as simple rates:
 
 ## Everything belongs to a team
 
-In Xelqun, your provider, domains, emails, blocked addresses, and API keys all belong to a team. What each teammate can do depends on their role. If you run more than one product or client, give each one its own team with its own SES account.
+In Xelqun, your Amazon SES connection, domains, emails, blocked addresses, and API keys all belong to a team. What each teammate can do depends on their role. If you run more than one product or client, give each one its own team with its own SES account.
 
 > New here? Start with the [Quickstart](/docs/quickstart) to send your first email fast.

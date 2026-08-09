@@ -70,7 +70,7 @@ defineOptions({
             <div>
                 <h2 class="text-xl font-semibold">Compose</h2>
                 <p class="text-sm text-muted-foreground">
-                    Send a message through your active provider.
+                    Send a message through Amazon SES.
                 </p>
             </div>
             <DocsLink page="sending-email" />

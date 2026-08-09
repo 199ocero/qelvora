@@ -39,7 +39,7 @@ defineOptions({
     layout: (layoutProps: { currentTeam?: { slug: string } | null }) => ({
         breadcrumbs: [
             {
-                title: 'Provider',
+                title: 'Connection',
                 href: layoutProps.currentTeam
                     ? mail.connection.index.url(layoutProps.currentTeam.slug)
                     : '/',

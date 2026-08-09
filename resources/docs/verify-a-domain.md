@@ -7,7 +7,7 @@ order: 4
 
 Before you can send, SES needs to know you own the address you send from. That proof is a sending identity: either a whole domain or a single email address. You manage it on the **Domains** screen.
 
-> You need an active provider connection first. Without one, the add form is replaced by a prompt to connect a provider.
+> You need an active Amazon SES connection first. Without one, the add form is replaced by a prompt to connect Amazon SES.
 
 ## Domain or single address
 

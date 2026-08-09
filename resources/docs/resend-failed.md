@@ -5,7 +5,7 @@ section: Sending
 order: 8
 ---
 
-Sometimes a send does not go through. The provider may have had a short outage, your keys may have lapsed, or you may have hit a rate limit. When that happens the message is marked **Failed** and kept, so you can look at it and try again.
+Sometimes a send does not go through. Amazon SES may have had a short outage, your keys may have lapsed, or you may have hit a rate limit. When that happens the message is marked **Failed** and kept, so you can look at it and try again.
 
 ## Find failed messages
 
