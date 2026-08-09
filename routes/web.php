@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DocsController;
 use App\Http\Controllers\Mail\ApiKeyController;
 use App\Http\Controllers\Mail\ConnectionController;
 use App\Http\Controllers\Mail\DashboardController as MailDashboardController;
@@ -12,6 +13,13 @@ use App\Http\Middleware\EnsureTeamMembership;
 use Illuminate\Support\Facades\Route;
 
 Route::inertia('/', 'Welcome')->name('home');
+
+// Public product documentation. Registered before the team-prefixed group so
+// `/docs` is not captured by the `{current_team}` wildcard.
+Route::prefix('docs')->name('docs.')->group(function () {
+    Route::get('/', [DocsController::class, 'index'])->name('index');
+    Route::get('{page}', [DocsController::class, 'show'])->name('show');
+});
 
 Route::prefix('{current_team}')
     ->middleware(['auth', 'verified', EnsureTeamMembership::class])

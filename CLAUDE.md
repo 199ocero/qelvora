@@ -68,6 +68,13 @@ Authorization is enum-driven, not Gate/Policy-heavy:
 ### Testing conventions
 - Pest; Feature tests get `RefreshDatabase` automatically (`tests/Pest.php`). Tests are organized by domain under `tests/Feature/` (`Auth/`, `Settings/`, `Teams/`). Use model factories and their states.
 
+## Writing docs content (`resources/docs`)
+User-facing docs must be simple and easy to read. Write for someone brand new to the product.
+- Keep sentences short and use everyday words. Prefer the plain version: "safe to run again" over "idempotent", "does nothing yet" over "inert", "update/spread" over "propagate", "starting point" over "root of trust".
+- Do not use em-dashes (—). Use a period, a comma, or parentheses instead.
+- Avoid jargon, filler, and hype. Say the thing directly, then stop.
+- Match the plain style of the existing pages when adding or editing docs.
+
 ## Git & commits
 
 This is an open-source project — keep history clean and readable. Commits follow [Conventional Commits](https://www.conventionalcommits.org/):
