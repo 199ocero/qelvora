@@ -2,6 +2,7 @@
 import { Form, Head, Link, usePage } from '@inertiajs/vue3';
 import { ChevronDown, Globe, Mail, Plus } from '@lucide/vue';
 import { computed, ref } from 'vue';
+import DocsLink from '@/components/DocsLink.vue';
 import InputError from '@/components/InputError.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -55,13 +56,16 @@ function statusVariant(status: IdentityStatus) {
     <h1 class="sr-only">Domains &amp; identities</h1>
 
     <div class="space-y-6 px-4 py-6">
-        <div>
-            <h2 class="text-xl font-semibold">Domains &amp; identities</h2>
-            <p class="text-sm text-muted-foreground">
-                Verify the domains and email addresses you send from. Publish
-                the DNS records we generate, then re-check to confirm
-                verification.
-            </p>
+        <div class="flex flex-wrap items-start justify-between gap-4">
+            <div>
+                <h2 class="text-xl font-semibold">Domains &amp; identities</h2>
+                <p class="text-sm text-muted-foreground">
+                    Verify the domains and email addresses you send from.
+                    Publish the DNS records we generate, then re-check to
+                    confirm verification.
+                </p>
+            </div>
+            <DocsLink page="verify-a-domain" />
         </div>
 
         <Card v-if="hasActiveConnection">

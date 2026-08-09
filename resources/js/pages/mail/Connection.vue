@@ -2,6 +2,7 @@
 import { Form, Head, router, usePage } from '@inertiajs/vue3';
 import { ChevronDown, Plug, RefreshCw, Trash2, Webhook } from '@lucide/vue';
 import { computed, ref } from 'vue';
+import DocsLink from '@/components/DocsLink.vue';
 import InputError from '@/components/InputError.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -131,12 +132,16 @@ function formatNumber(value: number | null): string {
     <h1 class="sr-only">Amazon SES</h1>
 
     <div class="space-y-6 px-4 py-6">
-        <div>
-            <h2 class="text-xl font-semibold">Amazon SES</h2>
-            <p class="text-sm text-muted-foreground">
-                Connect your Amazon SES account with your own AWS credentials.
-                They are encrypted at rest and never leave your team.
-            </p>
+        <div class="flex flex-wrap items-start justify-between gap-4">
+            <div>
+                <h2 class="text-xl font-semibold">Amazon SES</h2>
+                <p class="text-sm text-muted-foreground">
+                    Connect your Amazon SES account with your own AWS
+                    credentials. They are encrypted at rest and never leave your
+                    team.
+                </p>
+            </div>
+            <DocsLink page="connect-a-provider" />
         </div>
 
         <!-- Connect form -->

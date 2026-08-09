@@ -2,6 +2,7 @@
 import { Form, Head, usePage } from '@inertiajs/vue3';
 import { Save } from '@lucide/vue';
 import { computed } from 'vue';
+import DocsLink from '@/components/DocsLink.vue';
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -35,15 +36,18 @@ defineOptions({
     <h1 class="sr-only">New template</h1>
 
     <div class="mx-auto w-full max-w-2xl space-y-6 px-4 py-6">
-        <div>
-            <h2 class="text-xl font-semibold">New template</h2>
-            <p class="text-sm text-muted-foreground">
-                Use
-                <code class="rounded bg-muted px-1 py-0.5 text-xs">{{
-                    nameHint
-                }}</code>
-                style placeholders anywhere in the subject or body.
-            </p>
+        <div class="flex flex-wrap items-start justify-between gap-4">
+            <div>
+                <h2 class="text-xl font-semibold">New template</h2>
+                <p class="text-sm text-muted-foreground">
+                    Use
+                    <code class="rounded bg-muted px-1 py-0.5 text-xs">{{
+                        nameHint
+                    }}</code>
+                    style placeholders anywhere in the subject or body.
+                </p>
+            </div>
+            <DocsLink page="templates" />
         </div>
 
         <Card>

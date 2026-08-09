@@ -2,6 +2,7 @@
 import { Form, Head, router, usePage } from '@inertiajs/vue3';
 import { Ban, Plus, RefreshCw } from '@lucide/vue';
 import { computed, ref } from 'vue';
+import DocsLink from '@/components/DocsLink.vue';
 import InputError from '@/components/InputError.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -88,15 +89,18 @@ function remove(suppression: Suppression) {
                     complaints are added automatically.
                 </p>
             </div>
-            <Button
-                v-if="hasActiveConnection"
-                variant="outline"
-                size="sm"
-                @click="sync"
-            >
-                <RefreshCw class="size-4" />
-                Sync from provider
-            </Button>
+            <div class="flex items-center gap-4">
+                <DocsLink page="suppressions" />
+                <Button
+                    v-if="hasActiveConnection"
+                    variant="outline"
+                    size="sm"
+                    @click="sync"
+                >
+                    <RefreshCw class="size-4" />
+                    Sync from provider
+                </Button>
+            </div>
         </div>
 
         <Card>

@@ -2,6 +2,7 @@
 import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import { PenLine, Search, X } from '@lucide/vue';
 import { computed, ref, watch } from 'vue';
+import DocsLink from '@/components/DocsLink.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -123,12 +124,15 @@ function formatDate(value: string | null): string {
                     Every message sent through Xelqun and its delivery status.
                 </p>
             </div>
-            <Button as-child>
-                <Link :href="mail.emails.create.url(slug)">
-                    <PenLine class="size-4" />
-                    Compose
-                </Link>
-            </Button>
+            <div class="flex items-center gap-4">
+                <DocsLink page="sending-email" />
+                <Button as-child>
+                    <Link :href="mail.emails.create.url(slug)">
+                        <PenLine class="size-4" />
+                        Compose
+                    </Link>
+                </Button>
+            </div>
         </div>
 
         <div class="flex flex-wrap items-center gap-2">

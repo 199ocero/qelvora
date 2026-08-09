@@ -2,6 +2,7 @@
 import { Form, Head, router, usePage } from '@inertiajs/vue3';
 import { Check, Copy, KeyRound, Plus } from '@lucide/vue';
 import { computed, ref } from 'vue';
+import DocsLink from '@/components/DocsLink.vue';
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
 import {
@@ -67,14 +68,17 @@ function revoke(apiKey: ApiKey) {
     <h1 class="sr-only">API keys</h1>
 
     <div class="space-y-6 px-4 py-6">
-        <div>
-            <h2 class="text-xl font-semibold">API keys</h2>
-            <p class="text-sm text-muted-foreground">
-                Authenticate the sending API with a bearer token:
-                <code class="rounded bg-muted px-1 py-0.5 text-xs"
-                    >POST /api/v1/emails</code
-                >
-            </p>
+        <div class="flex flex-wrap items-start justify-between gap-4">
+            <div>
+                <h2 class="text-xl font-semibold">API keys</h2>
+                <p class="text-sm text-muted-foreground">
+                    Authenticate the sending API with a bearer token:
+                    <code class="rounded bg-muted px-1 py-0.5 text-xs"
+                        >POST /api/v1/emails</code
+                    >
+                </p>
+            </div>
+            <DocsLink page="api-keys" />
         </div>
 
         <!-- One-time key reveal -->

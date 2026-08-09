@@ -2,6 +2,7 @@
 import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import { FileText, Pencil, Plus } from '@lucide/vue';
 import { computed } from 'vue';
+import DocsLink from '@/components/DocsLink.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -60,12 +61,15 @@ function destroy(template: EmailTemplate) {
                     you fill in when sending.
                 </p>
             </div>
-            <Button v-if="props.canManage" as-child>
-                <Link :href="mail.templates.create.url(slug)">
-                    <Plus class="size-4" />
-                    New template
-                </Link>
-            </Button>
+            <div class="flex items-center gap-4">
+                <DocsLink page="templates" />
+                <Button v-if="props.canManage" as-child>
+                    <Link :href="mail.templates.create.url(slug)">
+                        <Plus class="size-4" />
+                        New template
+                    </Link>
+                </Button>
+            </div>
         </div>
 
         <div class="space-y-3">

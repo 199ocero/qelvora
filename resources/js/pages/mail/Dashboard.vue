@@ -13,6 +13,7 @@ import {
     Undo2,
 } from '@lucide/vue';
 import { computed } from 'vue';
+import DocsLink from '@/components/DocsLink.vue';
 import PendingInvitationsModal from '@/components/PendingInvitationsModal.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -129,7 +130,10 @@ const trendTotals = computed(() => ({
     />
 
     <div class="space-y-6 px-4 py-6">
-        <h2 class="text-xl font-semibold">Email overview</h2>
+        <div class="flex flex-wrap items-center justify-between gap-4">
+            <h2 class="text-xl font-semibold">Email overview</h2>
+            <DocsLink page="quickstart" label="Quickstart" />
+        </div>
 
         <!-- Not connected state -->
         <Card v-if="!connection">

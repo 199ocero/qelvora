@@ -2,6 +2,7 @@
 import { Form, Head, usePage } from '@inertiajs/vue3';
 import { ChevronDown, Send } from '@lucide/vue';
 import { computed, ref } from 'vue';
+import DocsLink from '@/components/DocsLink.vue';
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
 import {
@@ -65,11 +66,14 @@ defineOptions({
     <h1 class="sr-only">Compose email</h1>
 
     <div class="mx-auto w-full max-w-2xl space-y-6 px-4 py-6">
-        <div>
-            <h2 class="text-xl font-semibold">Compose</h2>
-            <p class="text-sm text-muted-foreground">
-                Send a message through your active provider.
-            </p>
+        <div class="flex flex-wrap items-start justify-between gap-4">
+            <div>
+                <h2 class="text-xl font-semibold">Compose</h2>
+                <p class="text-sm text-muted-foreground">
+                    Send a message through your active provider.
+                </p>
+            </div>
+            <DocsLink page="sending-email" />
         </div>
 
         <Card v-if="senders.length === 0">

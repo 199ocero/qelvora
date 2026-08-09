@@ -2,6 +2,7 @@
 import { Form, Head, usePage } from '@inertiajs/vue3';
 import { ArrowLeft, RefreshCw, X } from '@lucide/vue';
 import { computed } from 'vue';
+import DocsLink from '@/components/DocsLink.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -81,6 +82,8 @@ function formatDate(value: string | null): string {
                     {{ message.fromAddress }} → {{ message.to.join(', ') }}
                 </p>
             </div>
+
+            <DocsLink page="message-events" />
 
             <Form
                 v-if="canResend"

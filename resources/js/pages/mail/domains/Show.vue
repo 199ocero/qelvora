@@ -2,6 +2,7 @@
 import { Head, router, usePage } from '@inertiajs/vue3';
 import { ArrowLeft, Check, Copy, RefreshCw, Trash2 } from '@lucide/vue';
 import { computed, ref } from 'vue';
+import DocsLink from '@/components/DocsLink.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -101,7 +102,8 @@ function remove() {
                     identity.statusLabel
                 }}</Badge>
             </div>
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-3">
+                <DocsLink page="verify-a-domain" />
                 <Button
                     variant="outline"
                     size="sm"
