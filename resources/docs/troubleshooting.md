@@ -11,7 +11,7 @@ Most problems come from doing steps out of order: a missing provider, a domain t
 
 You are trying to add a domain, sync blocked addresses, or send, but there is no active provider.
 
-**Fix:** Open **Providers** and connect Amazon SES. See [Connect a provider](/docs/connect-a-provider).
+**Fix:** Open **Provider** and connect Amazon SES. See [Connect a provider](/docs/connect-a-provider).
 
 ## My keys are rejected when I connect
 
@@ -41,7 +41,7 @@ The message shows **Sent** but never **Delivered**, and there are no opens or bo
 
 **Fix:**
 
-1. On **Providers**, click **Set up webhook again** and read the result.
+1. On **Provider**, click **Set up webhook again** and read the result.
 2. If it fails, add SNS access to your key (the [AmazonSNSFullAccess](https://docs.aws.amazon.com/aws-managed-policy/latest/reference/AmazonSNSFullAccess.html) managed policy is the quickest way) and run it again.
 3. On your own machine, make sure a tunnel is running and its address is saved in the **Local webhook tunnel** field, then set up the webhook again. See [Webhooks](/docs/webhooks).
 
@@ -55,7 +55,7 @@ A recipient is on your blocked list, usually from an earlier bounce or complaint
 
 You can only send to verified addresses, and your limit is low.
 
-**Fix:** Your SES account is in the sandbox. Ask AWS for production access in the SES console. Your sandbox status shows on the Providers screen.
+**Fix:** Your SES account is in the sandbox. Ask AWS for production access in the SES console. Your sandbox status shows on the Provider screen.
 
 ## I lost an API key
 
@@ -67,4 +67,4 @@ The full key is shown only once, when you create it.
 
 Sidebar sections depend on the role.
 
-**Fix:** Providers is owner only. Domains, blocked addresses, and API keys are for owners and admins. Change the person's role in the team's member settings. See [Roles & permissions](/docs/roles-and-permissions).
+**Fix:** Provider is owner only. Domains, blocked addresses, and API keys are for owners and admins. Change the person's role in the team's member settings. See [Roles & permissions](/docs/roles-and-permissions).

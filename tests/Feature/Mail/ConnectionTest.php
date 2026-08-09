@@ -16,7 +16,7 @@ test('an owner can view the connection screen', function () {
         ->assertOk()
         ->assertInertia(fn ($page) => $page
             ->component('mail/Connection')
-            ->has('providers', 4)
+            ->where('provider.value', 'ses')
             ->has('connections'));
 });
 
@@ -79,40 +79,39 @@ test('invalid credentials fail the connection without activating it', function (
         ->and($connection->is_active)->toBeFalse();
 });
 
-test('an unimplemented provider is rejected', function () {
+test('an unknown provider is rejected', function () {
     fakeMailDriver();
     [$owner, $team] = teamMember(TeamRole::Owner);
 
     $this->actingAs($owner)
         ->post(route('mail.connection.store', $team), [
-            'provider' => MailProvider::Postmark->value,
-            'credentials' => ['server_token' => 'abc'],
+            'provider' => 'unknown',
+            'credentials' => ['access_key_id' => 'abc'],
         ])
         ->assertInvalid('provider');
 
     expect($team->connections()->count())->toBe(0);
 });
 
-test('switching activates another saved connection and preserves credentials', function () {
+test('switching activates a saved connection and preserves credentials', function () {
     fakeMailDriver();
     [$owner, $team] = teamMember(TeamRole::Owner);
 
-    $ses = ProviderConnection::factory()->for($team)->create([
+    $connection = ProviderConnection::factory()->for($team)->inactive()->create([
         'provider' => MailProvider::Ses,
-        'is_active' => true,
-    ]);
-    $postmark = ProviderConnection::factory()->for($team)->inactive()->create([
-        'provider' => MailProvider::Postmark,
-        'credentials' => ['server_token' => 'keep-me'],
+        'credentials' => [
+            'access_key_id' => 'keep-me',
+            'secret_access_key' => 'secret-value-123',
+            'region' => 'us-east-1',
+        ],
     ]);
 
     $this->actingAs($owner)
-        ->post(route('mail.connection.switch', $team), ['provider' => MailProvider::Postmark->value])
+        ->post(route('mail.connection.switch', $team), ['provider' => MailProvider::Ses->value])
         ->assertRedirect(route('mail.connection.index', $team));
 
-    expect($ses->fresh()->is_active)->toBeFalse()
-        ->and($postmark->fresh()->is_active)->toBeTrue()
-        ->and($postmark->fresh()->credential('server_token'))->toBe('keep-me');
+    expect($connection->fresh()->is_active)->toBeTrue()
+        ->and($connection->fresh()->credential('access_key_id'))->toBe('keep-me');
 });
 
 test('syncing refreshes cached account health', function () {

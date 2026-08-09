@@ -19,7 +19,7 @@ flowchart LR
 
 > **The open-source control plane for Amazon SES.**
 
-Xelqun focuses on email operations, not email delivery. The architecture is provider-agnostic from day one, but the MVP targets Amazon SES only.
+Xelqun focuses on email operations, not email delivery. It is built for Amazon SES only right now. The internals keep a provider-agnostic foundation so more providers can be added later, but SES is the whole focus today.
 
 ## Why Xelqun?
 
@@ -67,7 +67,7 @@ SES delivers the email. Xelqun runs the operations around it. If you're running 
 
 ## Planned MVP features
 
-> The MVP supports Amazon SES only. Other providers come later.
+> Xelqun supports Amazon SES only. Other providers are out of scope until the SES experience is solid.
 
 **Email Sending**
 - Transactional Email API
@@ -109,8 +109,8 @@ SES delivers the email. Xelqun runs the operations around it. If you're running 
 
 ## Roadmap
 
-### V1: MVP (in progress)
-Everything you need to operate Amazon SES in production.
+### V1: MVP (in progress) — the whole focus right now
+Everything you need to operate Amazon SES in production. This is where all effort goes today; the later versions are only a direction, not active work.
 
 - [x] Amazon SES support
 - [x] Transactional email API
@@ -127,8 +127,8 @@ Everything you need to operate Amazon SES in production.
 - [x] Team management
 - [ ] Docker deployment
 
-### V2: More providers
-Make Xelqun provider-agnostic in practice, not just in architecture.
+### V2: More providers (later, not started)
+Once SES is solid, make Xelqun provider-agnostic in practice, not just in architecture.
 
 - [ ] Postmark
 - [ ] Resend

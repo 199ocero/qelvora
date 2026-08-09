@@ -16,31 +16,32 @@ test('the manager resolves SES to the SES driver', function () {
     expect(app(MailProviderManager::class)->driver($connection))->toBeInstanceOf(SesDriver::class);
 });
 
-test('the manager throws for a provider without a driver', function () {
-    $connection = ProviderConnection::factory()->make(['provider' => MailProvider::Postmark]);
+test('the unsupported provider exception names the provider', function () {
+    $exception = UnsupportedProviderException::for(MailProvider::Ses);
 
-    app(MailProviderManager::class)->driver($connection);
-})->throws(UnsupportedProviderException::class);
+    expect($exception)->toBeInstanceOf(UnsupportedProviderException::class)
+        ->and($exception->getMessage())->toContain('Amazon SES');
+});
 
-test('a faked driver overrides resolution for every provider', function () {
+test('a faked driver overrides resolution', function () {
     $fake = fakeMailDriver();
 
-    $ses = ProviderConnection::factory()->make(['provider' => MailProvider::Ses]);
-    $postmark = ProviderConnection::factory()->make(['provider' => MailProvider::Postmark]);
+    $one = ProviderConnection::factory()->make(['provider' => MailProvider::Ses]);
+    $two = ProviderConnection::factory()->make(['provider' => MailProvider::Ses]);
 
-    expect(app(MailProviderManager::class)->driver($ses))->toBe($fake)
-        ->and(app(MailProviderManager::class)->driver($postmark))->toBe($fake);
+    expect(app(MailProviderManager::class)->driver($one))->toBe($fake)
+        ->and(app(MailProviderManager::class)->driver($two))->toBe($fake);
 });
 
-test('only SES is marked implemented', function () {
-    expect(MailProvider::Ses->isImplemented())->toBeTrue()
-        ->and(MailProvider::Postmark->isImplemented())->toBeFalse()
-        ->and(MailProvider::Resend->isImplemented())->toBeFalse()
-        ->and(MailProvider::Mailgun->isImplemented())->toBeFalse();
+test('SES is the only provider and is implemented', function () {
+    expect(MailProvider::cases())->toHaveCount(1)
+        ->and(MailProvider::Ses->isImplemented())->toBeTrue();
 });
 
-test('provider options expose credential fields for the picker', function () {
+test('provider options expose SES credential fields', function () {
     $options = collect(MailProvider::options());
+
+    expect($options)->toHaveCount(1);
 
     $ses = $options->firstWhere('value', 'ses');
 

@@ -13,7 +13,7 @@ export type Paginated<T> = {
     total?: number;
 };
 
-export type MailProvider = 'ses' | 'postmark' | 'resend' | 'mailgun';
+export type MailProvider = 'ses';
 
 export type ProviderConnectionStatus = 'pending' | 'connected' | 'failed';
 

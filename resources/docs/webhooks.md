@@ -31,7 +31,7 @@ You can run this again safely. It will not create duplicates.
 
 If a message stays at **Sent** and never moves, work through these:
 
-1. **Is the webhook set up?** On the Providers screen, click **Set up webhook again** and read the result. A failure usually points to a missing permission.
+1. **Is the webhook set up?** On the Provider screen, click **Set up webhook again** and read the result. A failure usually points to a missing permission.
 2. **Does the key allow SNS?** The setup needs `sns:CreateTopic` and `sns:Subscribe`, plus `sns:SetTopicAttributes`. The quickest fix is to attach the [AmazonSNSFullAccess](https://docs.aws.amazon.com/aws-managed-policy/latest/reference/AmazonSNSFullAccess.html) managed policy to the key. Then run it again.
 3. **Can the address be reached from the internet?** SNS has to reach your app. On a live site that is your real domain. On your own machine you need a tunnel.
 
@@ -40,7 +40,7 @@ If a message stays at **Sent** and never moves, work through these:
 AWS cannot reach `localhost`, so you have to expose your app:
 
 1. Start a tunnel with `herd share`, ngrok, Expose, or Cloudflare Tunnel.
-2. Paste its public address into the **Local webhook tunnel** field on the Providers screen.
+2. Paste its public address into the **Local webhook tunnel** field on the Provider screen.
 3. Set up the webhook again so SNS points at the tunnel address.
 
 Xelqun reads this address on every request, so update it each time your tunnel restarts with a new one. See [Connect a provider](/docs/connect-a-provider) for the full setup.

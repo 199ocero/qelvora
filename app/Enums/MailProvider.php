@@ -2,12 +2,16 @@
 
 namespace App\Enums;
 
+/**
+ * The email service providers Xelqun can operate.
+ *
+ * Xelqun focuses on Amazon SES for now. The enum is intentionally kept (rather
+ * than hard-coding SES everywhere) so the provider-agnostic driver layer stays
+ * intact for when more providers are added later.
+ */
 enum MailProvider: string
 {
     case Ses = 'ses';
-    case Postmark = 'postmark';
-    case Resend = 'resend';
-    case Mailgun = 'mailgun';
 
     /**
      * Get the display label for the provider.
@@ -16,23 +20,19 @@ enum MailProvider: string
     {
         return match ($this) {
             self::Ses => 'Amazon SES',
-            self::Postmark => 'Postmark',
-            self::Resend => 'Resend',
-            self::Mailgun => 'Mailgun',
         };
     }
 
     /**
      * Determine whether a concrete driver exists for this provider.
      *
-     * Only implemented providers can be connected; the rest are surfaced in
-     * the UI as "coming soon" and rejected by the MailProviderManager.
+     * Kept for the driver abstraction: only implemented providers can be
+     * connected, and the MailProviderManager rejects the rest.
      */
     public function isImplemented(): bool
     {
         return match ($this) {
             self::Ses => true,
-            default => false,
         };
     }
 
@@ -46,9 +46,6 @@ enum MailProvider: string
     {
         return match ($this) {
             self::Ses => ['identities', 'events', 'suppression', 'tracking'],
-            self::Postmark => ['identities', 'events', 'suppression'],
-            self::Resend => ['identities', 'events', 'suppression'],
-            self::Mailgun => ['identities', 'events', 'suppression', 'tracking'],
         };
     }
 
@@ -65,21 +62,23 @@ enum MailProvider: string
                 ['name' => 'secret_access_key', 'label' => 'Secret access key', 'type' => 'password', 'required' => true],
                 ['name' => 'region', 'label' => 'Region', 'type' => 'select', 'required' => true, 'options' => self::sesRegionOptions()],
             ],
-            self::Postmark => [
-                ['name' => 'server_token', 'label' => 'Server API token', 'type' => 'password', 'required' => true],
-            ],
-            self::Resend => [
-                ['name' => 'api_key', 'label' => 'API key', 'type' => 'password', 'required' => true, 'placeholder' => 're_…'],
-            ],
-            self::Mailgun => [
-                ['name' => 'api_key', 'label' => 'API key', 'type' => 'password', 'required' => true],
-                ['name' => 'domain', 'label' => 'Sending domain', 'type' => 'text', 'required' => true],
-                ['name' => 'region', 'label' => 'Region', 'type' => 'select', 'required' => true, 'options' => [
-                    ['value' => 'us', 'label' => 'US'],
-                    ['value' => 'eu', 'label' => 'EU'],
-                ]],
-            ],
         };
+    }
+
+    /**
+     * Describe the provider for the frontend.
+     *
+     * @return array{value: string, label: string, implemented: bool, capabilities: array<int, string>, credentialFields: array<int, mixed>}
+     */
+    public function toArray(): array
+    {
+        return [
+            'value' => $this->value,
+            'label' => $this->label(),
+            'implemented' => $this->isImplemented(),
+            'capabilities' => $this->capabilities(),
+            'credentialFields' => $this->credentialFields(),
+        ];
     }
 
     /**
@@ -109,20 +108,14 @@ enum MailProvider: string
     }
 
     /**
-     * Get all providers described for the frontend picker.
+     * Get all providers described for the frontend.
      *
      * @return array<int, array{value: string, label: string, implemented: bool, capabilities: array<int, string>, credentialFields: array<int, mixed>}>
      */
     public static function options(): array
     {
         return collect(self::cases())
-            ->map(fn (self $provider) => [
-                'value' => $provider->value,
-                'label' => $provider->label(),
-                'implemented' => $provider->isImplemented(),
-                'capabilities' => $provider->capabilities(),
-                'credentialFields' => $provider->credentialFields(),
-            ])
+            ->map(fn (self $provider) => $provider->toArray())
             ->all();
     }
 }

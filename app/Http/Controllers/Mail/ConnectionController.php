@@ -36,7 +36,7 @@ class ConnectionController extends Controller
         Gate::authorize('manageProviders', $team);
 
         return Inertia::render('mail/Connection', [
-            'providers' => MailProvider::options(),
+            'provider' => MailProvider::Ses->toArray(),
             'connections' => $team->connections()
                 ->latest('is_active')
                 ->get()

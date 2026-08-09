@@ -3,7 +3,6 @@
 namespace App\Services\Mail;
 
 use App\Enums\MailProvider;
-use App\Exceptions\UnsupportedProviderException;
 use App\Models\ProviderConnection;
 use App\Services\Mail\Contracts\MailProviderDriver;
 use App\Services\Mail\Drivers\Ses\SesClientFactory;
@@ -12,8 +11,9 @@ use Closure;
 
 /**
  * Resolves the concrete {@see MailProviderDriver} for a team's provider
- * connection. Mirrors Laravel's own manager pattern: SES is implemented, other
- * providers throw until a driver is registered, and tests can swap in a fake.
+ * connection. Mirrors Laravel's own manager pattern: SES is the only provider
+ * today, custom drivers can be registered via extend(), and tests can swap in a
+ * fake. The abstraction is kept so more providers can be added later.
  */
 class MailProviderManager
 {
@@ -50,9 +50,12 @@ class MailProviderManager
             return ($this->extensions[$connection->provider->value])($connection);
         }
 
+        // SES is the only provider today. The match stays exhaustive over the
+        // enum, so adding a future case without a driver is a compile-time error
+        // rather than a silent fallthrough. Unmapped provider strings can only
+        // arrive via extend(), handled above.
         return match ($connection->provider) {
             MailProvider::Ses => new SesDriver($connection, $this->sesClientFactory),
-            default => throw UnsupportedProviderException::for($connection->provider),
         };
     }
 

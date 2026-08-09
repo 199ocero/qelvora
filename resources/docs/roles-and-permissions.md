@@ -32,8 +32,8 @@ What this means in practice:
 
 ## What each person sees
 
-The sidebar only shows the sections a role allows, so the product fits who is looking. If a teammate cannot see **Providers** or **API keys**, that is their role. An owner or admin can change it in the team's member settings.
+The sidebar only shows the sections a role allows, so the product fits who is looking. If a teammate cannot see **Provider** or **API keys**, that is their role. An owner or admin can change it in the team's member settings.
 
 ## More than one team
 
-If you run more than one product, or serve more than one client, give each one its own team. Providers, domains, emails, blocked addresses, and API keys are all kept apart per team, and a person can have a different role in each.
+If you run more than one product, or serve more than one client, give each one its own team. Provider, domains, emails, blocked addresses, and API keys are all kept apart per team, and a person can have a different role in each.

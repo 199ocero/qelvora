@@ -22,7 +22,7 @@ Send, and you land on the message page with its live history.
 
 A send is stopped, with a clear message, if any of these is true:
 
-- **No active provider.** Connect one on the Providers screen.
+- **No active provider.** Connect one on the Provider screen.
 - **The sender is not verified.** The from address must belong to a verified domain or address.
 - **A recipient is blocked.** If any recipient is on your [blocked list](/docs/suppressions), the send is stopped so you do not email a known bad address.
 

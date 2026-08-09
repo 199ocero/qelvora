@@ -1,13 +1,6 @@
 <script setup lang="ts">
 import { Form, Head, router, usePage } from '@inertiajs/vue3';
-import {
-    Check,
-    ChevronDown,
-    Plug,
-    RefreshCw,
-    Trash2,
-    Webhook,
-} from '@lucide/vue';
+import { ChevronDown, Plug, RefreshCw, Trash2, Webhook } from '@lucide/vue';
 import { computed, ref } from 'vue';
 import InputError from '@/components/InputError.vue';
 import { Badge } from '@/components/ui/badge';
@@ -26,7 +19,7 @@ import mail from '@/routes/mail';
 import type { ProviderConnection, ProviderOption } from '@/types';
 
 type Props = {
-    providers: ProviderOption[];
+    provider: ProviderOption;
     connections: ProviderConnection[];
     webhookTunnel: {
         editable: boolean;
@@ -45,7 +38,7 @@ defineOptions({
     layout: (layoutProps: { currentTeam?: { slug: string } | null }) => ({
         breadcrumbs: [
             {
-                title: 'Providers',
+                title: 'Provider',
                 href: layoutProps.currentTeam
                     ? mail.connection.index.url(layoutProps.currentTeam.slug)
                     : '/',
@@ -54,32 +47,15 @@ defineOptions({
     }),
 });
 
-const connectedProviders = computed(
-    () => new Set(props.connections.map((connection) => connection.provider)),
-);
-
-const selectedProvider = ref<ProviderOption | null>(
-    props.providers.find(
-        (provider) =>
-            provider.implemented &&
-            !connectedProviders.value.has(provider.value),
-    ) ?? null,
+const isConnected = computed(() =>
+    props.connections.some(
+        (connection) => connection.provider === props.provider.value,
+    ),
 );
 
 const activeConnection = computed(
     () => props.connections.find((connection) => connection.isActive) ?? null,
 );
-
-const formKey = ref(0);
-
-function selectProvider(provider: ProviderOption) {
-    if (!provider.implemented) {
-        return;
-    }
-
-    selectedProvider.value = provider;
-    formKey.value++;
-}
 
 function statusVariant(status: string) {
     return status === 'connected'
@@ -151,79 +127,29 @@ function formatNumber(value: number | null): string {
 </script>
 
 <template>
-    <Head title="Email providers" />
-    <h1 class="sr-only">Email providers</h1>
+    <Head title="Amazon SES" />
+    <h1 class="sr-only">Amazon SES</h1>
 
     <div class="space-y-6 px-4 py-6">
         <div>
-            <h2 class="text-xl font-semibold">Email providers</h2>
+            <h2 class="text-xl font-semibold">Amazon SES</h2>
             <p class="text-sm text-muted-foreground">
-                Connect an email service provider with your own credentials. You
-                can save more than one and switch the active provider at any
-                time.
+                Connect your Amazon SES account with your own AWS credentials.
+                They are encrypted at rest and never leave your team.
             </p>
         </div>
 
-        <!-- Provider picker -->
-        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <Card
-                v-for="provider in providers"
-                :key="provider.value"
-                role="button"
-                :tabindex="provider.implemented ? 0 : -1"
-                :aria-disabled="!provider.implemented"
-                :aria-pressed="selectedProvider?.value === provider.value"
-                data-test="provider-option"
-                :class="[
-                    'gap-2 py-4 text-left transition-colors',
-                    provider.implemented
-                        ? 'cursor-pointer hover:border-primary'
-                        : 'pointer-events-none cursor-not-allowed opacity-60',
-                    selectedProvider?.value === provider.value
-                        ? 'border-primary ring-1 ring-primary'
-                        : '',
-                ]"
-                @click="provider.implemented && selectProvider(provider)"
-                @keydown.enter.prevent="
-                    provider.implemented && selectProvider(provider)
-                "
-                @keydown.space.prevent="
-                    provider.implemented && selectProvider(provider)
-                "
-            >
-                <CardHeader class="px-4">
-                    <div class="flex w-full items-center justify-between">
-                        <CardTitle class="text-base font-medium">{{
-                            provider.label
-                        }}</CardTitle>
-                        <Badge v-if="!provider.implemented" variant="secondary"
-                            >Coming soon</Badge
-                        >
-                        <Check
-                            v-else-if="connectedProviders.has(provider.value)"
-                            class="size-4 text-primary"
-                        />
-                    </div>
-                    <CardDescription class="text-xs capitalize">
-                        {{ provider.capabilities.join(' · ') }}
-                    </CardDescription>
-                </CardHeader>
-            </Card>
-        </div>
-
         <!-- Connect form -->
-        <Card v-if="selectedProvider">
+        <Card v-if="!isConnected" data-test="connect-card">
             <CardHeader>
-                <CardTitle>Connect {{ selectedProvider.label }}</CardTitle>
+                <CardTitle>Connect {{ provider.label }}</CardTitle>
                 <CardDescription>
-                    Enter the credentials for your
-                    {{ selectedProvider.label }} account. They are encrypted at
-                    rest and never leave your team.
+                    Enter the credentials for your {{ provider.label }} account.
+                    They are encrypted at rest and never leave your team.
                 </CardDescription>
             </CardHeader>
             <CardContent>
                 <Form
-                    :key="formKey"
                     v-bind="mail.connection.store.form(slug)"
                     class="space-y-4"
                     v-slot="{ errors, processing }"
@@ -231,11 +157,11 @@ function formatNumber(value: number | null): string {
                     <input
                         type="hidden"
                         name="provider"
-                        :value="selectedProvider.value"
+                        :value="provider.value"
                     />
 
                     <div
-                        v-for="field in selectedProvider.credentialFields"
+                        v-for="field in provider.credentialFields"
                         :key="field.name"
                         class="grid gap-2"
                     >
@@ -284,7 +210,7 @@ function formatNumber(value: number | null): string {
                         data-test="connect-submit"
                     >
                         <Plug class="size-4" />
-                        Connect {{ selectedProvider.label }}
+                        Connect {{ provider.label }}
                     </Button>
                 </Form>
             </CardContent>
@@ -300,7 +226,7 @@ function formatNumber(value: number | null): string {
                     }}</Badge>
                 </CardTitle>
                 <CardDescription>
-                    Sending limits and reputation for the active provider.
+                    Sending limits and reputation for your SES account.
                 </CardDescription>
             </CardHeader>
             <CardContent class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -386,8 +312,7 @@ function formatNumber(value: number | null): string {
                 <CardDescription>
                     Start a tunnel (Expose, ngrok, <code>herd share</code>,
                     Cloudflare…) to your local app and paste its public HTTPS
-                    URL here. Providers deliver events to this base URL instead
-                    of
+                    URL here. SES delivers events to this base URL instead of
                     <code class="rounded bg-muted px-1 py-0.5 text-xs"
                         >APP_URL</code
                     >. Re-provision the webhook after changing it.
@@ -498,7 +423,8 @@ function formatNumber(value: number | null): string {
                 v-if="connections.length === 0"
                 class="py-8 text-center text-muted-foreground"
             >
-                No providers connected yet. Pick one above to get started.
+                No SES account connected yet. Add your credentials above to get
+                started.
             </p>
         </div>
     </div>

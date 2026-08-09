@@ -75,7 +75,7 @@ const mailNavItems = computed<NavItem[]>(() => {
 
     if (permissions?.canManageProviders) {
         items.push({
-            title: 'Providers',
+            title: 'Provider',
             href: mail.connection.index.url(slug),
             icon: Plug,
         });

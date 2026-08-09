@@ -9,7 +9,7 @@ This is the fast path. Each step links to a full guide if you want more detail. 
 
 ## 1. Connect your SES account
 
-Open **Providers** and connect **Amazon SES** with your access key ID, secret access key, and region. Xelqun checks the keys and turns on event tracking for you.
+Open **Provider** and connect **Amazon SES** with your access key ID, secret access key, and region. Xelqun checks the keys and turns on event tracking for you.
 
 → [Connect a provider](/docs/connect-a-provider)
 
