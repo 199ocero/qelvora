@@ -159,6 +159,7 @@ Resilience, insight, and optionally marketing email.
 ## Tech stack
 
 - **Backend:** Laravel 13, PHP 8.3+
+- **Database:** PostgreSQL
 - **Frontend:** Inertia v3, Vue 3 (TypeScript), Tailwind CSS v4
 - **Auth:** Laravel Fortify (login, registration, email verification, 2FA/TOTP, recovery codes)
 - **Deployment:** Docker, self-hosted
