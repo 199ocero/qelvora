@@ -19,7 +19,7 @@ flowchart LR
 
 > **The open-source control plane for Amazon SES.**
 
-Xelqun focuses on email operations, not email delivery. It is built for Amazon SES only right now. The internals keep a provider-agnostic foundation so more providers can be added later, but SES is the whole focus today.
+Xelqun focuses on email operations, not email delivery. It is built specifically for Amazon SES.
 
 ## Why Xelqun?
 
@@ -67,7 +67,7 @@ SES delivers the email. Xelqun runs the operations around it. If you're running 
 
 ## Planned MVP features
 
-> Xelqun supports Amazon SES only. Other providers are out of scope until the SES experience is solid.
+> Xelqun supports Amazon SES only.
 
 **Email Sending**
 - Transactional Email API
@@ -109,8 +109,8 @@ SES delivers the email. Xelqun runs the operations around it. If you're running 
 
 ## Roadmap
 
-### V1: MVP (in progress) — the whole focus right now
-Everything you need to operate Amazon SES in production. This is where all effort goes today; the later versions are only a direction, not active work.
+### V1: MVP (in progress)
+Everything you need to operate Amazon SES in production. This is the whole focus.
 
 - [x] Amazon SES support
 - [x] Transactional email API
@@ -127,21 +127,9 @@ Everything you need to operate Amazon SES in production. This is where all effor
 - [x] Team management
 - [ ] Docker deployment
 
-### V2: More providers (later, not started)
-Once SES is solid, make Xelqun provider-agnostic in practice, not just in architecture.
+### V2: Advanced
+Resilience, insight, and optionally marketing email. Not started.
 
-- [ ] Postmark
-- [ ] Resend
-- [ ] Mailgun
-- [ ] SendGrid
-- [ ] Unified provider abstraction
-- [ ] Event normalization across providers
-
-### V3: Advanced
-Resilience, insight, and optionally marketing email.
-
-- [ ] Provider failover
-- [ ] Multi-provider routing
 - [ ] Unified analytics
 - [ ] Marketing email
 - [ ] Contact management
@@ -149,8 +137,6 @@ Resilience, insight, and optionally marketing email.
 
 ## Technical principles
 
-- Provider-agnostic architecture
-- Event normalization across providers
 - Queue-first architecture
 - Docker-first deployment
 - API-first
