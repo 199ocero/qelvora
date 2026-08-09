@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        {{-- Qelvora is dark-only; keep the background painted before the app boots to avoid a flash. --}}
+        {{-- Xelqun is dark-only; keep the background painted before the app boots to avoid a flash. --}}
         <style>
             html {
                 background-color: #0b0d0e;

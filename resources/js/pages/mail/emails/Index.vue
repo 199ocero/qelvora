@@ -70,7 +70,7 @@ function formatDate(value: string | null): string {
             <div>
                 <h2 class="text-xl font-semibold">Email log</h2>
                 <p class="text-sm text-muted-foreground">
-                    Every message sent through Qelvora and its delivery status.
+                    Every message sent through Xelqun and its delivery status.
                 </p>
             </div>
             <Button as-child>

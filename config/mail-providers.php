@@ -50,8 +50,8 @@ return [
         'default_region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
 
         // Naming templates for the per-team configuration set and SNS topic.
-        'configuration_set_template' => 'qelvora-{slug}',
-        'topic_template' => 'qelvora-ses-{slug}',
+        'configuration_set_template' => 'xelqun-{slug}',
+        'topic_template' => 'xelqun-ses-{slug}',
 
         // The SES event types routed to our webhook via the SNS event destination.
         'event_types' => [

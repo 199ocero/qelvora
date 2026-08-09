@@ -92,7 +92,7 @@
 }
 
 /*
-  Qelvora runs a single, Linear-inspired dark theme. The palette below is the
+  Xelqun runs a single, Linear-inspired dark theme. The palette below is the
   only source of truth — there is no light mode. Emerald stays the accent and
   the rounded radius is preserved. `:root` and `.dark` carry identical values
   so `dark:` variant utilities keep resolving against the same tokens.

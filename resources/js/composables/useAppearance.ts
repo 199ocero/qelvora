@@ -15,7 +15,7 @@ export function updateTheme(): void {
         return;
     }
 
-    // Qelvora is dark-only — the theme never leaves dark regardless of preference.
+    // Xelqun is dark-only — the theme never leaves dark regardless of preference.
     document.documentElement.classList.add('dark');
 }
 

@@ -1,46 +1,46 @@
-# Qelvora
+# Xelqun
 
 **An open-source email operations platform for Amazon SES. It adds the dashboards, logs, retries, webhooks, suppression management, and team tools that SES doesn't give you, while your email keeps running inside your own AWS account.**
 
 > ⚠️ **Status: Under active development. Not usable yet.**
-> Qelvora is being built in the open and is not production-ready. The features below are planned or in progress. There is no stable release, so don't rely on it for anything real yet.
+> Xelqun is being built in the open and is not production-ready. The features below are planned or in progress. There is no stable release, so don't rely on it for anything real yet.
 
 ---
 
-## What is Qelvora?
+## What is Xelqun?
 
-Qelvora is a self-hosted email operations platform that sits on top of Amazon SES. It does not replace SES or become another email provider. It gives you the operational tooling that SES leaves out.
+Xelqun is a self-hosted email operations platform that sits on top of Amazon SES. It does not replace SES or become another email provider. It gives you the operational tooling that SES leaves out.
 
 ```mermaid
 flowchart LR
-    A["Your App<br/><i>sends email</i>"] -->|API| B["Qelvora<br/><i>logs, retries, webhooks, dashboards</i>"]
+    A["Your App<br/><i>sends email</i>"] -->|API| B["Xelqun<br/><i>logs, retries, webhooks, dashboards</i>"]
     B --> C["Amazon SES<br/><i>actually delivers</i><br/>(in your AWS account)"]
 ```
 
 > **The open-source control plane for Amazon SES.**
 
-Qelvora focuses on email operations, not email delivery. The architecture is provider-agnostic from day one, but the MVP targets Amazon SES only.
+Xelqun focuses on email operations, not email delivery. The architecture is provider-agnostic from day one, but the MVP targets Amazon SES only.
 
-## Why Qelvora?
+## Why Xelqun?
 
 Connect your AWS account and get a working email platform right away: dashboards, logs, retries, bounce and complaint handling, suppression lists, and team management. It all runs on your own infrastructure, so you don't have to build any of it yourself.
 
 ### Why not just point my app at SES directly?
 
-For basic sending, you should. If all you need is `App -> SES`, Qelvora adds nothing. SES already gives you SMTP and an API, and most frameworks already have a mailer that talks to it. Qelvora is not an easier way to send email.
+For basic sending, you should. If all you need is `App -> SES`, Xelqun adds nothing. SES already gives you SMTP and an API, and most frameworks already have a mailer that talks to it. Xelqun is not an easier way to send email.
 
 The value shows up once email becomes something you have to operate, not just call. When you're sending real volume, SES leaves these gaps for you to fill:
 
 - **Where did my email go?** You want a searchable history of every message and its status (queued, sent, accepted, delivered), not a send call that returns nothing.
-- **Why didn't the customer receive it?** SES reports bounces, complaints, and deliveries, but only if you build the pipeline yourself: SNS, a webhook endpoint, a queue, a database, and a dashboard. Qelvora is that pipeline.
+- **Why didn't the customer receive it?** SES reports bounces, complaints, and deliveries, but only if you build the pipeline yourself: SNS, a webhook endpoint, a queue, a database, and a dashboard. Xelqun is that pipeline.
 - **Suppression management.** A permanent bounce should stop you from ever emailing that address again. You don't want to rebuild this in every app.
 - **Debugging.** When someone asks why John didn't get his password reset, you want one timeline (app accepted, queued, SES accepted, delivered) instead of digging through CloudWatch, app logs, SES, and SNS.
 
-So Qelvora isn't a nicer way to use SES. It's the operations layer around email delivery.
+So Xelqun isn't a nicer way to use SES. It's the operations layer around email delivery.
 
 ```mermaid
 flowchart TB
-    subgraph Q["Qelvora (the control plane)"]
+    subgraph Q["Xelqun (the control plane)"]
         direction LR
         L["Logs & history"]
         E["Events"]
@@ -54,7 +54,7 @@ flowchart TB
     SES --> Net["The internet"]
 ```
 
-SES delivers the email. Qelvora runs the operations around it. If you're running a SaaS and email has become infrastructure you operate rather than a function you call, Qelvora is for you.
+SES delivers the email. Xelqun runs the operations around it. If you're running a SaaS and email has become infrastructure you operate rather than a function you call, Xelqun is for you.
 
 ## Who it's for
 
@@ -128,7 +128,7 @@ Everything you need to operate Amazon SES in production.
 - [ ] Docker deployment
 
 ### V2: More providers
-Make Qelvora provider-agnostic in practice, not just in architecture.
+Make Xelqun provider-agnostic in practice, not just in architecture.
 
 - [ ] Postmark
 - [ ] Resend
@@ -169,4 +169,4 @@ Installation and setup instructions are coming soon, once the MVP stabilizes.
 
 ## License
 
-Qelvora is open source under the [GNU Affero General Public License v3.0](LICENSE) (AGPL-3.0).
+Xelqun is open source under the [GNU Affero General Public License v3.0](LICENSE) (AGPL-3.0).

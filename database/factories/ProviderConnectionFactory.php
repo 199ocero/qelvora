@@ -29,7 +29,7 @@ class ProviderConnectionFactory extends Factory
                 'region' => 'us-east-1',
             ],
             'settings' => [
-                'configuration_set_name' => 'qelvora-'.fake()->slug(2),
+                'configuration_set_name' => 'xelqun-'.fake()->slug(2),
                 'sns_topic_arn' => 'arn:aws:sns:us-east-1:123456789012:'.fake()->slug(2),
                 'webhook_provisioned' => true,
             ],

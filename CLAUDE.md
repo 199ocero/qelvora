@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-Qelvora is a Laravel 13 + Inertia v3 + Vue 3 (TypeScript) application built on the Laravel Vue starter kit, extended with **team-based multi-tenancy**. Auth is handled by Laravel Fortify (login, registration, email verification, password reset, 2FA/TOTP, recovery codes). Routes are typed end-to-end via Laravel Wayfinder.
+Xelqun is a Laravel 13 + Inertia v3 + Vue 3 (TypeScript) application built on the Laravel Vue starter kit, extended with **team-based multi-tenancy**. Auth is handled by Laravel Fortify (login, registration, email verification, password reset, 2FA/TOTP, recovery codes). Routes are typed end-to-end via Laravel Wayfinder.
 
 The product is an **email operations platform for Amazon SES** — the operational layer (logs, events, webhooks, suppression, retries, domain verification, API keys) around SES, which stays in the user's own AWS account. Each team connects its own provider; all mail resources are team-scoped and live under the mail routes/controllers. The provider layer is driver-based (`app/Services/Mail/`) with SES as the only implemented driver so far, but the architecture is provider-agnostic. See `.ai/rules/mail.md` for mail-specific conventions.
 

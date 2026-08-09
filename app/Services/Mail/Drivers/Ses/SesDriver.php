@@ -83,7 +83,7 @@ class SesDriver implements MailProviderDriver
         try {
             $ses->createConfigurationSetEventDestination([
                 'ConfigurationSetName' => $configSet,
-                'EventDestinationName' => 'qelvora-sns',
+                'EventDestinationName' => 'xelqun-sns',
                 'EventDestination' => [
                     'Enabled' => true,
                     'MatchingEventTypes' => config('mail-providers.ses.event_types'),
@@ -111,7 +111,7 @@ class SesDriver implements MailProviderDriver
         $ses = $this->clients->sesV2($this->connection);
 
         // Creating an identity that already exists in SES (a prior attempt, or
-        // one registered outside Qelvora) is not an error — adopt it and read
+        // one registered outside Xelqun) is not an error — adopt it and read
         // back its current attributes below.
         try {
             $ses->createEmailIdentity(['EmailIdentity' => $identity]);
