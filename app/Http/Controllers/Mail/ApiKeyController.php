@@ -5,9 +5,11 @@ namespace App\Http\Controllers\Mail;
 use App\Actions\Mail\CreateApiKey;
 use App\Actions\Mail\RevokeApiKey;
 use App\Concerns\PresentsMailResources;
+use App\Enums\IdentityStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Mail\CreateApiKeyRequest;
 use App\Models\ApiKey;
+use App\Models\MailIdentity;
 use App\Models\Team;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -30,10 +32,17 @@ class ApiKeyController extends Controller
 
         return Inertia::render('mail/ApiKeys', [
             'apiKeys' => $team->apiKeys()
-                ->with('creator')
+                ->with(['creator', 'mailIdentity'])
                 ->latest()
                 ->get()
                 ->map(fn (ApiKey $apiKey) => $this->presentApiKey($apiKey))
+                ->all(),
+            // Verified identities a new key can be restricted to.
+            'identities' => $team->mailIdentities()
+                ->where('status', IdentityStatus::Verified)
+                ->orderBy('identity')
+                ->get()
+                ->map(fn (MailIdentity $identity) => $this->presentIdentity($identity))
                 ->all(),
             // Shown exactly once, immediately after creation.
             'newApiKey' => $request->session()->get('newApiKey'),
@@ -49,7 +58,12 @@ class ApiKeyController extends Controller
 
         Gate::authorize('manageApiKeys', $team);
 
-        ['plainText' => $plainText] = $createApiKey->handle($team, $request->user(), $request->validated('name'));
+        ['plainText' => $plainText] = $createApiKey->handle(
+            $team,
+            $request->user(),
+            $request->validated('name'),
+            $request->validated('mail_identity_id'),
+        );
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('API key created.')]);
 

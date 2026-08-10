@@ -14,11 +14,12 @@ class CreateApiKey
      *
      * @return array{key: ApiKey, plainText: string}
      */
-    public function handle(Team $team, User $user, string $name): array
+    public function handle(Team $team, User $user, string $name, ?int $mailIdentityId = null): array
     {
         $plainText = 'qlv_'.Str::random(40);
 
         $apiKey = $team->apiKeys()->create([
+            'mail_identity_id' => $mailIdentityId,
             'name' => $name,
             'key_prefix' => substr($plainText, 0, 12),
             'key_hash' => $plainText,

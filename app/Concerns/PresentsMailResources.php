@@ -148,6 +148,7 @@ trait PresentsMailResources
             'name' => $apiKey->name,
             'keyPrefix' => $apiKey->key_prefix,
             'lastFour' => $apiKey->last_four,
+            'restrictedTo' => $apiKey->mailIdentity?->identity,
             'createdBy' => $apiKey->creator?->name,
             'lastUsedAt' => $apiKey->last_used_at?->toIso8601String(),
             'revokedAt' => $apiKey->revoked_at?->toIso8601String(),

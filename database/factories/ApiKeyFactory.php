@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\ApiKey;
+use App\Models\MailIdentity;
 use App\Models\Team;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
@@ -38,6 +39,16 @@ class ApiKeyFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'revoked_at' => now(),
+        ]);
+    }
+
+    /**
+     * Restrict the key to a single verified sending identity.
+     */
+    public function restrictedTo(MailIdentity $identity): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'mail_identity_id' => $identity->id,
         ]);
     }
 }

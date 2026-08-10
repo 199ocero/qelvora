@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Actions\Mail\SendEmail;
 use App\Exceptions\Mail\NoActiveProviderException;
 use App\Exceptions\Mail\RecipientSuppressedException;
+use App\Exceptions\Mail\RestrictedSenderException;
 use App\Exceptions\Mail\UnverifiedSenderException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Mail\SendMailRequest;
@@ -33,11 +34,14 @@ class EmailController extends Controller
                 queue: true,
                 templateId: $request->template()?->id,
                 scheduledAt: $request->scheduledAt(),
+                restrictedTo: $apiKey->mailIdentity,
             );
         } catch (NoActiveProviderException $e) {
             return response()->json(['message' => $e->getMessage()], 409);
         } catch (UnverifiedSenderException $e) {
             return response()->json(['message' => $e->getMessage()], 422);
+        } catch (RestrictedSenderException $e) {
+            return response()->json(['message' => $e->getMessage()], 403);
         } catch (RecipientSuppressedException $e) {
             return response()->json(['message' => $e->getMessage(), 'suppressed' => $e->emails], 422);
         }

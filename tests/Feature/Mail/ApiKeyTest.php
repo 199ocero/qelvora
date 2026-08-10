@@ -25,6 +25,35 @@ test('an owner can create an API key shown once', function () {
         ->and(Hash::check($plain, $apiKey->key_hash))->toBeTrue();
 });
 
+test('an owner can restrict a key to a verified identity', function () {
+    [$owner, $team] = sendingTeam(TeamRole::Owner);
+    $identity = $team->mailIdentities()->firstOrFail();
+
+    $this->actingAs($owner)
+        ->post(route('mail.api-keys.store', $team), [
+            'name' => 'Domain-locked',
+            'mail_identity_id' => $identity->id,
+        ])
+        ->assertRedirect(route('mail.api-keys.index', $team));
+
+    expect($team->apiKeys()->firstOrFail()->mail_identity_id)->toBe($identity->id);
+});
+
+test('a key cannot be restricted to another team identity', function () {
+    [$owner, $team] = sendingTeam(TeamRole::Owner);
+    [, $otherTeam] = sendingTeam(TeamRole::Owner);
+    $foreign = $otherTeam->mailIdentities()->firstOrFail();
+
+    $this->actingAs($owner)
+        ->post(route('mail.api-keys.store', $team), [
+            'name' => 'Sneaky',
+            'mail_identity_id' => $foreign->id,
+        ])
+        ->assertSessionHasErrors('mail_identity_id');
+
+    expect($team->apiKeys()->count())->toBe(0);
+});
+
 test('an API key can be revoked', function () {
     [$owner, $team] = teamMember(TeamRole::Owner);
     $apiKey = ApiKey::factory()->for($team)->create();

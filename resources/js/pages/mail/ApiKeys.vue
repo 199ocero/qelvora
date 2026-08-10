@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Form, Head, router, usePage } from '@inertiajs/vue3';
-import { Check, Copy, KeyRound, Plus } from '@lucide/vue';
+import { Check, ChevronDown, Copy, KeyRound, Lock, Plus } from '@lucide/vue';
 import { computed, ref } from 'vue';
 import DocsLink from '@/components/DocsLink.vue';
 import InputError from '@/components/InputError.vue';
@@ -15,10 +15,11 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import mail from '@/routes/mail';
-import type { ApiKey } from '@/types';
+import type { ApiKey, MailIdentity } from '@/types';
 
 type Props = {
     apiKeys: ApiKey[];
+    identities: MailIdentity[];
     newApiKey: string | null;
 };
 
@@ -131,6 +132,31 @@ function revoke(apiKey: ApiKey) {
                         />
                         <InputError :message="errors.name" />
                     </div>
+                    <div class="grid flex-1 gap-2">
+                        <Label for="mail_identity_id">Sender</Label>
+                        <div class="relative">
+                            <select
+                                id="mail_identity_id"
+                                name="mail_identity_id"
+                                class="h-9 w-full appearance-none rounded-md border border-input bg-transparent py-1 pr-9 pl-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:bg-input/30"
+                            >
+                                <option value="">
+                                    Any verified domain or address
+                                </option>
+                                <option
+                                    v-for="identity in identities"
+                                    :key="identity.id"
+                                    :value="identity.id"
+                                >
+                                    {{ identity.identity }}
+                                </option>
+                            </select>
+                            <ChevronDown
+                                class="pointer-events-none absolute top-1/2 right-3 size-4 -translate-y-1/2 text-muted-foreground"
+                            />
+                        </div>
+                        <InputError :message="errors.mail_identity_id" />
+                    </div>
                     <Button
                         type="submit"
                         :disabled="processing"
@@ -156,6 +182,13 @@ function revoke(apiKey: ApiKey) {
                         <p class="font-medium">{{ apiKey.name }}</p>
                         <p class="font-mono text-xs text-muted-foreground">
                             {{ apiKey.keyPrefix }}…{{ apiKey.lastFour }}
+                        </p>
+                        <p
+                            v-if="apiKey.restrictedTo"
+                            class="mt-1 flex items-center gap-1 text-xs text-muted-foreground"
+                        >
+                            <Lock class="size-3" />
+                            Sends only from {{ apiKey.restrictedTo }}
                         </p>
                     </div>
                 </div>

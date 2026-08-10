@@ -1,9 +1,11 @@
 <?php
 
 use App\Enums\EmailMessageStatus;
+use App\Enums\IdentityType;
 use App\Enums\TeamRole;
 use App\Jobs\SendQueuedEmail;
 use App\Models\ApiKey;
+use App\Models\MailIdentity;
 use App\Models\Suppression;
 use App\Models\Team;
 use Illuminate\Support\Facades\Queue;
@@ -27,6 +29,22 @@ function apiKeyFor(Team $team): array
     ]);
 
     return [$team, $plain];
+}
+
+/**
+ * Create a key restricted to a single identity and return its plaintext token.
+ */
+function restrictedApiKeyFor(Team $team, MailIdentity $identity): string
+{
+    $plain = 'qlv_'.Str::random(40);
+
+    ApiKey::factory()->for($team)->restrictedTo($identity)->create([
+        'key_prefix' => substr($plain, 0, 12),
+        'key_hash' => $plain,
+        'last_four' => substr($plain, -4),
+    ]);
+
+    return $plain;
 }
 
 test('the API sends an email with a valid key', function () {
@@ -111,4 +129,44 @@ test('the API rejects an unverified sender', function () {
             'html' => '<p>Hi</p>',
         ])
         ->assertStatus(422);
+});
+
+test('a restricted key can send from its own identity', function () {
+    Queue::fake();
+    [, $team] = sendingTeam(TeamRole::Owner);
+    $identity = $team->mailIdentities()->firstOrFail();
+    $token = restrictedApiKeyFor($team, $identity);
+
+    $this->withToken($token)
+        ->postJson(route('api.v1.emails.store'), [
+            'from' => 'hello@example.com',
+            'to' => ['user@customer.test'],
+            'subject' => 'Hi',
+            'html' => '<p>Hi</p>',
+        ])
+        ->assertStatus(202);
+});
+
+test('a restricted key rejects another verified sender', function () {
+    [, $team, $connection] = sendingTeam(TeamRole::Owner);
+    $identity = $team->mailIdentities()->firstOrFail();
+
+    // A second verified domain the team could otherwise send from.
+    MailIdentity::factory()->for($connection, 'connection')->verified()->create([
+        'identity' => 'other.com',
+        'type' => IdentityType::Domain,
+    ]);
+
+    $token = restrictedApiKeyFor($team, $identity);
+
+    $this->withToken($token)
+        ->postJson(route('api.v1.emails.store'), [
+            'from' => 'hello@other.com',
+            'to' => ['user@customer.test'],
+            'subject' => 'Hi',
+            'html' => '<p>Hi</p>',
+        ])
+        ->assertStatus(403);
+
+    expect($team->emailMessages()->count())->toBe(0);
 });

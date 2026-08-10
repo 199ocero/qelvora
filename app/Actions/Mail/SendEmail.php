@@ -4,11 +4,14 @@ namespace App\Actions\Mail;
 
 use App\Enums\EmailMessageStatus;
 use App\Enums\IdentityStatus;
+use App\Enums\IdentityType;
 use App\Exceptions\Mail\NoActiveProviderException;
 use App\Exceptions\Mail\RecipientSuppressedException;
+use App\Exceptions\Mail\RestrictedSenderException;
 use App\Exceptions\Mail\UnverifiedSenderException;
 use App\Jobs\SendQueuedEmail;
 use App\Models\EmailMessage;
+use App\Models\MailIdentity;
 use App\Models\Team;
 use App\Services\Mail\Data\OutgoingMessage;
 use App\Services\Mail\MailProviderManager;
@@ -27,7 +30,7 @@ class SendEmail
     /**
      * Validate and send (or queue) an email for the team's active provider.
      *
-     * @throws NoActiveProviderException|UnverifiedSenderException|RecipientSuppressedException
+     * @throws NoActiveProviderException|UnverifiedSenderException|RestrictedSenderException|RecipientSuppressedException
      */
     public function handle(
         Team $team,
@@ -37,6 +40,7 @@ class SendEmail
         bool $queue = false,
         ?int $templateId = null,
         ?CarbonInterface $scheduledAt = null,
+        ?MailIdentity $restrictedTo = null,
     ): EmailMessage {
         $connection = $team->activeConnection();
 
@@ -46,6 +50,10 @@ class SendEmail
 
         if (! $this->isVerifiedSender($team, $message->from)) {
             throw new UnverifiedSenderException($message->from);
+        }
+
+        if ($restrictedTo !== null && ! $this->senderMatchesIdentity($restrictedTo, $message->from)) {
+            throw new RestrictedSenderException($message->from, $restrictedTo->identity);
         }
 
         $suppressed = $team->suppressions()
@@ -151,6 +159,23 @@ class SendEmail
                 ->where('identity', $address)
                 ->orWhere('identity', $domain))
             ->exists();
+    }
+
+    /**
+     * Determine whether the from address is allowed by a key's restricted identity.
+     *
+     * A domain identity authorizes any address at that domain; an email
+     * identity authorizes only its exact address.
+     */
+    protected function senderMatchesIdentity(MailIdentity $identity, string $from): bool
+    {
+        $address = Str::lower($this->extractAddress($from));
+
+        if ($identity->type === IdentityType::Domain) {
+            return Str::afterLast($address, '@') === Str::lower($identity->identity);
+        }
+
+        return $address === Str::lower($identity->identity);
     }
 
     /**

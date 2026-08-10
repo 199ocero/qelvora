@@ -173,6 +173,7 @@ export type ApiKey = {
     name: string;
     keyPrefix: string;
     lastFour: string;
+    restrictedTo: string | null;
     createdBy: string | null;
     lastUsedAt: string | null;
     revokedAt: string | null;

@@ -13,6 +13,7 @@ use Illuminate\Support\Carbon;
 /**
  * @property int $id
  * @property int $team_id
+ * @property int|null $mail_identity_id
  * @property string $name
  * @property string $key_prefix
  * @property string $key_hash
@@ -23,9 +24,10 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read Team $team
+ * @property-read MailIdentity|null $mailIdentity
  * @property-read User|null $creator
  */
-#[Fillable(['team_id', 'name', 'key_prefix', 'key_hash', 'last_four', 'created_by', 'last_used_at', 'revoked_at'])]
+#[Fillable(['team_id', 'mail_identity_id', 'name', 'key_prefix', 'key_hash', 'last_four', 'created_by', 'last_used_at', 'revoked_at'])]
 class ApiKey extends Model
 {
     /** @use HasFactory<ApiKeyFactory> */
@@ -42,6 +44,16 @@ class ApiKey extends Model
     }
 
     /**
+     * Get the verified identity this key is restricted to, if any.
+     *
+     * @return BelongsTo<MailIdentity, $this>
+     */
+    public function mailIdentity(): BelongsTo
+    {
+        return $this->belongsTo(MailIdentity::class);
+    }
+
+    /**
      * Get the user who created the API key.
      *
      * @return BelongsTo<User, $this>
@@ -49,6 +61,14 @@ class ApiKey extends Model
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    /**
+     * Determine whether the key is restricted to a single sending identity.
+     */
+    public function isRestricted(): bool
+    {
+        return $this->mail_identity_id !== null;
     }
 
     /**
