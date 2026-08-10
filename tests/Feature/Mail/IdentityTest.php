@@ -7,6 +7,8 @@ use App\Enums\TeamRole;
 use App\Models\MailIdentity;
 use App\Models\ProviderConnection;
 use App\Models\Team;
+use App\Services\Mail\Data\DnsRecord;
+use App\Services\Mail\Dns\DnsRecordChecker;
 
 beforeEach(function () {
     fakeMailDriver();
@@ -77,6 +79,38 @@ test('refreshing an identity updates its verification status', function () {
 
     expect($identity->status)->toBe(IdentityStatus::Verified)
         ->and($identity->verified_at)->not->toBeNull();
+});
+
+test('refreshing an identity records which DNS records are already live', function () {
+    [$owner, $team] = teamMember(TeamRole::Owner);
+    $connection = activeConnection($team);
+    $identity = MailIdentity::factory()->for($connection, 'connection')->create([
+        'status' => IdentityStatus::Pending,
+    ]);
+
+    // Avoid a live DNS lookup: mark every record as seen.
+    $this->app->instance(DnsRecordChecker::class, new class extends DnsRecordChecker
+    {
+        public function annotate(array $records): array
+        {
+            return array_map(
+                fn (DnsRecord $record): DnsRecord => $record->withStatus(self::STATUS_SEEN),
+                $records,
+            );
+        }
+    });
+
+    $this->actingAs($owner)
+        ->post(route('mail.domains.refresh', [$team, $identity]))
+        ->assertRedirect();
+
+    $identity->refresh();
+
+    expect($identity->dns_records)->not->toBeEmpty();
+
+    foreach ($identity->dns_records as $record) {
+        expect($record['status'])->toBe('seen');
+    }
 });
 
 test('deleting an identity removes it', function () {

@@ -19,7 +19,7 @@ Before you can send, SES needs to know you own the address you send from. That p
 1. Open **Domains** and add your domain.
 2. You land on the domain's page, which lists the DNS records to add.
 3. Add those records with your DNS host.
-4. Click **Refresh** to check again. When SES confirms them, the status becomes **Verified**.
+4. The page re-checks on its own, or click **Re-check** to check now. When SES confirms them, the status becomes **Verified**.
 
 The status starts as **Pending** and stays there until every record is found. DNS can take a few minutes to a few hours to update.
 
@@ -70,9 +70,21 @@ Name:  _dmarc.example.com
 Value: v=DMARC1; p=none;
 ```
 
+## Where to add the records
+
+The records go to whoever runs your domain's DNS. That is your nameservers, not where your website is hosted.
+
+- **Cloudflare**: add each record under DNS. Set the DKIM `CNAME` records and the `MX` record to **DNS only** (grey cloud), not proxied. Proxying breaks mail records.
+- **Route 53**: add the records to the hosted zone that runs this domain's nameservers.
+- **Other hosts** (Namecheap, GoDaddy, and so on): add the records in your DNS settings. Some hosts want the name relative to your domain, like `mail` or `_dmarc`, instead of the full name. Enter whichever your host expects.
+
+You copy the records by hand. Xelqun does not change your DNS for you.
+
 ## Checking the status
 
-DNS is not instant. Come back to the domain page and click **Refresh** to ask SES to check again. Once it is verified, the domain shows up as a sender when you compose an email.
+DNS is not instant. Each record row has an **In DNS** column that shows **Seen** once the record is live, so you can tell your changes worked before SES confirms them.
+
+While a domain is still pending, the page checks again on its own every few seconds. You can pause that, or click **Re-check** to check right away. Once the domain is verified, it shows up as a sender when you compose an email.
 
 ## Removing a domain or address
 

@@ -20,6 +20,21 @@ readonly class DnsRecord
     }
 
     /**
+     * Return a copy of this record with its DNS-visibility status set.
+     */
+    public function withStatus(?string $status): self
+    {
+        return new self(
+            type: $this->type,
+            host: $this->host,
+            value: $this->value,
+            priority: $this->priority,
+            purpose: $this->purpose,
+            status: $status,
+        );
+    }
+
+    /**
      * @return array{type: string, host: string, value: string, priority: int|null, purpose: string|null, status: string|null}
      */
     public function toArray(): array

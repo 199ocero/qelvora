@@ -84,13 +84,15 @@ export type ProviderConnection = {
     lastSyncedAt: string | null;
 };
 
+export type DnsRecordStatus = 'seen' | 'missing';
+
 export type DnsRecord = {
     type: string;
     host: string;
     value: string;
     priority: number | null;
     purpose: string | null;
-    status: string | null;
+    status: DnsRecordStatus | null;
 };
 
 export type MailIdentity = {
