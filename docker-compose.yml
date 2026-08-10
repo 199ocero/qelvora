@@ -50,7 +50,7 @@ services:
 
   worker:
     <<: *app
-    command: ["php", "artisan", "queue:work", "--tries=3", "--max-time=3600"]
+    command: ["php", "artisan", "horizon"]
     ports: []
 
   scheduler:

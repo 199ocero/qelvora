@@ -146,6 +146,7 @@ Resilience, insight, and optionally marketing email. Not started.
 
 - **Backend:** Laravel 13, PHP 8.3+
 - **Database:** PostgreSQL
+- **Queue:** Redis + Laravel Horizon
 - **Frontend:** Inertia v3, Vue 3 (TypeScript), Tailwind CSS v4
 - **Auth:** Laravel Fortify (login, registration, email verification, 2FA/TOTP, recovery codes)
 - **Deployment:** Docker, self-hosted
@@ -176,7 +177,9 @@ Xelqun ships with a Docker Compose stack for self-hosting. It runs five services
 
 3. Open the app at `http://localhost:8000` (change the port with `APP_PORT`).
 
-The `worker` service sends queued email and the `scheduler` service runs the every-minute jobs, including releasing scheduled emails. Both reuse the same image as the app.
+The `worker` service runs Laravel Horizon, which processes all queued jobs (email sending, webhook events, identity checks) using Redis. The `scheduler` service runs the every-minute schedule, including releasing scheduled emails and capturing Horizon metrics snapshots. Both reuse the same image as the app.
+
+The Horizon dashboard is available at `/horizon` once the app is running. Any authenticated user can access it.
 
 ## License
 

@@ -35,3 +35,7 @@ Schedule::command('mail:send-scheduled')
 Schedule::command('mail:refresh-identities')
     ->everyFiveMinutes()
     ->description('Re-check pending SES identity verification status');
+
+Schedule::command('horizon:snapshot')
+    ->everyFiveMinutes()
+    ->description('Capture Horizon metrics snapshot for the dashboard');
