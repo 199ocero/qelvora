@@ -72,6 +72,12 @@ const isPending = computed(() =>
     pendingStatuses.includes(props.identity.status),
 );
 
+const allRecordsSeen = computed(
+    () =>
+        props.identity.dnsRecords.length > 0 &&
+        props.identity.dnsRecords.every((record) => record.status === 'seen'),
+);
+
 const autoActive = computed(
     () =>
         props.identity.type === 'domain' &&
@@ -257,7 +263,12 @@ onUnmounted(() => {
                 <div class="flex flex-wrap items-start justify-between gap-3">
                     <div class="space-y-1.5">
                         <CardTitle>DNS records</CardTitle>
-                        <CardDescription>
+                        <CardDescription v-if="isPending && allRecordsSeen">
+                            All records are live in DNS. Amazon is verifying
+                            your domain, which can take up to 72 hours. This
+                            page updates on its own.
+                        </CardDescription>
+                        <CardDescription v-else>
                             Add these records at your DNS provider. Verification
                             can take up to 72 hours to propagate.
                         </CardDescription>
