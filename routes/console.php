@@ -31,3 +31,7 @@ Schedule::call(function () {
 Schedule::command('mail:send-scheduled')
     ->everyMinute()
     ->description('Release scheduled emails that are now due');
+
+Schedule::command('mail:refresh-identities')
+    ->everyFiveMinutes()
+    ->description('Re-check pending SES identity verification status');
