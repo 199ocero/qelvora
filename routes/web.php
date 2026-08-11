@@ -14,6 +14,7 @@ use App\Http\Middleware\EnsureTeamMembership;
 use Illuminate\Support\Facades\Route;
 
 Route::inertia('/', 'Welcome')->name('home');
+Route::inertia('/features', 'Features')->name('features');
 
 // Public product documentation. Registered before the team-prefixed group so
 // `/docs` is not captured by the `{current_team}` wildcard.
